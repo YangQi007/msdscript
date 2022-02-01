@@ -1,3 +1,7 @@
+msdscript
+cmake-build-*
+main.cpp~
+.Ds_Store
 # Prerequisites
 *.d
 
