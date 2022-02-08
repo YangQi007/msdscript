@@ -3,4 +3,4 @@ project(msdscript)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(msdscript main.cpp cmdline.cpp cmdline.h)
+add_executable(msdscript main.cpp cmdline.cpp cmdline.h expr.cpp expr.h)
