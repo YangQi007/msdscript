@@ -92,6 +92,8 @@ TEST_CASE("Mult"){
 TEST_CASE("Variable"){
     CHECK((new Variables("1")) ->equals(new Variables("1")) == true);
     CHECK((new Variables("1")) ->equals(new Variables("2")) == false);
+    CHECK((new Variables("thomas")) ->equals(new Variables("thomas")) == true);
+    CHECK((new Variables("anna")) ->equals(new Variables("anne")) == false);
 
 }
 
