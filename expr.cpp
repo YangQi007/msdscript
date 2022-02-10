@@ -3,8 +3,9 @@
 //
 #include "catch.h"
 #include "expr.h"
+#include <stdexcept>
 
-
+//subclass Num
 Num::Num(int val) {
     this->val = val;
 
@@ -19,6 +20,20 @@ bool Num::equals(Expr *e) {
     }
 }
 
+int Num::interp() {
+    return this->val;
+}
+
+bool Num::has_variable() {
+    return false;
+}
+
+Expr* Num::subst(std::string s, Expr *e) {
+    return new Num(val);
+}
+
+/////////////////////////////////////////////////////////////////////
+//subclass Add
 Add::Add(Expr *lhs, Expr *rhs) {
     this->lhs = lhs;
     this->rhs = rhs;
@@ -34,6 +49,20 @@ bool Add::equals(Expr *e) {
     }
 }
 
+int Add::interp() {
+    return (this->lhs->interp() + this->rhs->interp());
+}
+
+bool Add::has_variable() {
+    return this->lhs->has_variable() || this->rhs->has_variable();
+}
+
+Expr* Add::subst(std::string s, Expr *e) {
+    return new Add((this->lhs)->subst(s,e),(this->rhs)->subst(s,e));
+}
+
+////////////////////////////////////////////////////////////////////
+//subclass Mult
 Mult::Mult(Expr *lhs, Expr *rhs) {
     this->lhs = lhs;
     this->rhs = rhs;
@@ -49,6 +78,20 @@ bool Mult::equals(Expr *e) {
     }
 }
 
+int Mult::interp() {
+    return (this->lhs->interp() * this->rhs->interp());
+}
+
+bool Mult::has_variable() {
+    return this->lhs->has_variable() || this->rhs->has_variable();
+}
+
+Expr* Mult::subst(std::string s, Expr *e) {
+    return new Mult((this->lhs)->subst(s,e),(this->rhs)->subst(s,e));
+}
+
+/////////////////////////////////////////////////////////////////////
+//subclass variables
 Variables::Variables(std::string val) {
     this->val = val;
 }
@@ -62,40 +105,24 @@ bool Variables::equals(Expr *e) {
     }
 }
 
-TEST_CASE("Num"){
-    CHECK((new Num(1)) ->equals(new Num(1)) == true);
-    CHECK((new Num(1)) ->equals(new Num(2)) == false);
+int Variables::interp() {
+    throw std::runtime_error("no value for variable");
 }
 
-TEST_CASE("Add"){
-    Num *n1 = new Num(1);
-    Num *n2 = new Num(2);
-    Num *n3 = new Num(3);
-    Add *add1 = new Add(n1,n2);
-    Add *add2= new Add(n1,n3);
-    Add *add3 = new Add(n1,n2);
-    CHECK(add1->equals(add3) == true);
-    CHECK(add1->equals(add2) == false);
+bool Variables::has_variable() {
+    return true;
 }
 
-TEST_CASE("Mult"){
-    Num *n1 = new Num(1);
-    Num *n2 = new Num(2);
-    Num *n3 = new Num(3);
-    Mult *m1 = new Mult(n1,n2);
-    Mult *m2= new Mult(n1,n3);
-    Mult *m3 = new Mult(n1,n2);
-    CHECK(m1->equals(m3) == true);
-    CHECK(m1->equals(m2) == false);
+Expr* Variables::subst(std::string s, Expr *e) {
+    if (this->val == s ){
+        return e;
+    }else
+        return new Variables(s);
 }
 
-TEST_CASE("Variable"){
-    CHECK((new Variables("1")) ->equals(new Variables("1")) == true);
-    CHECK((new Variables("1")) ->equals(new Variables("2")) == false);
-    CHECK((new Variables("thomas")) ->equals(new Variables("thomas")) == true);
-    CHECK((new Variables("anna")) ->equals(new Variables("anne")) == false);
+////////////////////////////////////////////////////////////////////
 
-}
+
 
 
 
