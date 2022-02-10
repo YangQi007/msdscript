@@ -12,6 +12,10 @@
 class Expr{
 public:
     virtual bool equals(Expr *e) = 0;
+    virtual int interp() = 0;
+    virtual bool has_variable() = 0;
+    virtual Expr* subst(std::string s, Expr *e) = 0;
+
 };
 
 class Num : public Expr{
@@ -20,6 +24,10 @@ public:
 
     Num(int val);
     bool equals(Expr *e) override;
+    int interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr *e) override;
+
 
 };
 
@@ -30,6 +38,9 @@ public:
 
     Add(Expr *lhs, Expr *rhs);
     bool equals(Expr *e) override;
+    int interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr *e) override;
 
 };
 
@@ -40,6 +51,9 @@ public:
 
     Mult(Expr *lhs, Expr *rhs);
     bool equals(Expr *e) override;
+    int interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr *e) override;
 
 };
 
@@ -48,5 +62,8 @@ public:
     std::string val;
     Variables(std::string val);
     bool equals(Expr *e) override;
+    int interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr *e) override;
 };
 #endif //MSDSCRIPT_EXPR_H
