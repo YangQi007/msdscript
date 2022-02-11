@@ -32,6 +32,18 @@ Expr* Num::subst(std::string s, Expr *e) {
     return new Num(val);
 }
 
+void Num::print(std::ostream &out) {
+
+}
+
+void Num::pretty_print(std::ostream &out) {
+
+}
+
+void Num::pretty_print_at(std::ostream &out, precedence_t p) {
+
+}
+
 /////////////////////////////////////////////////////////////////////
 //subclass Add
 Add::Add(Expr *lhs, Expr *rhs) {
@@ -45,7 +57,7 @@ bool Add::equals(Expr *e) {
     if (n == NULL){
         return false;
     }else{
-        return this->lhs == n->lhs && this->rhs == n->rhs;
+        return this->lhs->equals(n->lhs) && this->rhs->equals(n->rhs);
     }
 }
 
@@ -61,6 +73,18 @@ Expr* Add::subst(std::string s, Expr *e) {
     return new Add((this->lhs)->subst(s,e),(this->rhs)->subst(s,e));
 }
 
+void Add::print(std::ostream &out) {
+
+}
+
+void Add::pretty_print(std::ostream &out) {
+
+}
+
+void Add::pretty_print_at(std::ostream &out, precedence_t p) {
+
+}
+
 ////////////////////////////////////////////////////////////////////
 //subclass Mult
 Mult::Mult(Expr *lhs, Expr *rhs) {
@@ -74,7 +98,7 @@ bool Mult::equals(Expr *e) {
     if (n == NULL){
         return false;
     }else{
-        return this->lhs == n->lhs && this->rhs == n->rhs;
+        return this->lhs->equals(n->lhs) && this->rhs->equals(n->rhs);
     }
 }
 
@@ -88,6 +112,18 @@ bool Mult::has_variable() {
 
 Expr* Mult::subst(std::string s, Expr *e) {
     return new Mult((this->lhs)->subst(s,e),(this->rhs)->subst(s,e));
+}
+
+void Mult::print(std::ostream &out) {
+
+}
+
+void Mult::pretty_print(std::ostream &out) {
+
+}
+
+void Mult::pretty_print_at(std::ostream &out, precedence_t p) {
+
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -120,9 +156,24 @@ Expr* Variables::subst(std::string s, Expr *e) {
         return new Variables(s);
 }
 
+void Variables::print(std::ostream &out) {
+
+}
+
+void Variables::pretty_print(std::ostream &out) {
+
+}
+
+void Variables::pretty_print_at(std::ostream &out, precedence_t p) {
+
+}
+
 ////////////////////////////////////////////////////////////////////
 
 
 
 
 
+std::string Expr::to_string() {
+    return std::string();
+}
