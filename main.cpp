@@ -124,5 +124,9 @@ TEST_CASE("Variable") {
         CHECK((new Variables("x"))
                       ->subst("x", new Variables("s"))
                       ->equals(new Variables("s")));
+
+        CHECK((new Variables("y"))
+                      ->subst("x", new Variables("s"))
+                      ->equals(new Variables("x")));
     }
 }

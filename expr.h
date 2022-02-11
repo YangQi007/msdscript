@@ -9,12 +9,23 @@
 #include "catch.h"
 #include <iostream>
 
+typedef enum {
+    prec_none,      // = 0
+    prec_add,       // = 1
+    prec_mult       // = 2
+} precedence_t;
+
 class Expr{
 public:
     virtual bool equals(Expr *e) = 0;
     virtual int interp() = 0;
     virtual bool has_variable() = 0;
     virtual Expr* subst(std::string s, Expr *e) = 0;
+    virtual void print(std::ostream &out) = 0;
+    virtual void pretty_print(std::ostream &out) = 0;
+    virtual void pretty_print_at(std::ostream &out,precedence_t p) = 0;
+    std::string to_string();
+
 
 };
 
@@ -27,7 +38,9 @@ public:
     int interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
-
+    void print(std::ostream &out) override;
+    void pretty_print(std::ostream &out) override;
+    void pretty_print_at(std::ostream &out,precedence_t p) override;
 
 };
 
@@ -41,6 +54,10 @@ public:
     int interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
+    void print(std::ostream &out) override;
+    void pretty_print(std::ostream &out) override;
+    void pretty_print_at(std::ostream &out,precedence_t p) override;
+
 
 };
 
@@ -54,16 +71,24 @@ public:
     int interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
+    void print(std::ostream &out) override;
+    void pretty_print(std::ostream &out) override;
+    void pretty_print_at(std::ostream &out,precedence_t p) override;
 
 };
 
 class Variables : public Expr{
 public:
     std::string val;
+
     Variables(std::string val);
     bool equals(Expr *e) override;
     int interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
+    void print(std::ostream &out) override;
+    void pretty_print(std::ostream &out) override;
+    void pretty_print_at(std::ostream &out,precedence_t p) override;
+
 };
 #endif //MSDSCRIPT_EXPR_H
