@@ -38,6 +38,20 @@ TEST_CASE("Num"){
         CHECK(n1 ->subst("x",new Num(4)) ->equals(new Num(1)));
     }
 
+    SECTION("print"){
+        CHECK(n1 ->to_string() == "1");
+        CHECK(n2 ->to_string() == "2");
+    }
+
+    SECTION("pretty_print"){
+        CHECK(n1 ->to_string_pretty() == "1");
+        CHECK(n2 ->to_string_pretty() == "2");
+    }
+
+    SECTION("pretty_print_at"){
+        CHECK(n1 ->to_string_pretty() == "1");
+        CHECK(n2 ->to_string_pretty() == "2");
+    }
 }
 
 TEST_CASE("Add") {
@@ -47,6 +61,9 @@ TEST_CASE("Add") {
     Add *add1 = new Add(n1, n2);
     Add *add2 = new Add(n1, n3);
     Add *add3 = new Add(n1, n2);
+    Mult *m1 = new Mult(n1, n2);
+    Mult *m2 = new Mult(n1, n3);
+    Mult *m3 = new Mult(n1, n2);
 
     SECTION("equals") {
         CHECK(add1->equals(add3) == true);
@@ -69,12 +86,30 @@ TEST_CASE("Add") {
                        ->subst("x", new Variables("y"))
                        ->equals(new Add(new Variables("y"), new Num(7))) );
     }
+
+    SECTION("print"){
+        CHECK((new Add(add1,n1)) ->to_string() == "((1+2)+1)");
+        CHECK((new Add(n2,add2)) ->to_string() == "(2+(1+3))");
+    }
+
+    SECTION("pretty_print"){
+        CHECK((new Add(add1,n1))  ->to_string_pretty() == "(1 + 2) + 1");
+        CHECK((new Add(m1,n1))  ->to_string_pretty() == "(1 * 2) + 1");
+        CHECK((new Add(n2,add2)) ->to_string_pretty() == "2 + 1 + 3");
+    }
+
+    SECTION("pretty_print_at"){
+        CHECK((new Add(add1,n1))  ->to_string_pretty() == "(1 + 2) + 1");
+        CHECK((new Add(n1,add1)) ->to_string_pretty() == "1 + 1 + 2");
+    }
+
 }
 
 TEST_CASE("Mult"){
     Num *n1 = new Num(1);
     Num *n2 = new Num(2);
     Num *n3 = new Num(3);
+    Add *add1 = new Add(n1, n2);
     Mult *m1 = new Mult(n1, n2);
     Mult *m2 = new Mult(n1, n3);
     Mult *m3 = new Mult(n1, n2);
@@ -99,6 +134,24 @@ TEST_CASE("Mult"){
                        ->subst("x", new Variables("y"))
                        ->equals(new Mult(new Variables("y"), new Num(7))) );
     }
+
+    SECTION("print"){
+        CHECK((new Mult(m1,n1)) ->to_string() == "((1*2)*1)");
+        CHECK((new Mult(n2,m2)) ->to_string() == "(2*(1*3))");
+    }
+
+    SECTION("pretty_print"){
+        CHECK((new Mult(m1,n1))  ->to_string_pretty() == "(1 * 2) * 1");
+        CHECK((new Mult(n2,m2)) ->to_string_pretty() == "2 * 1 * 3");
+    }
+
+    SECTION("pretty_print_at"){
+        CHECK((new Mult(m1,n1))  ->to_string_pretty() == "(1 * 2) * 1");
+        CHECK((new Mult(n2,m2)) ->to_string_pretty() == "2 * 1 * 3");
+        CHECK((new Mult(n2,add1)) ->to_string_pretty() == "2 * 1 + 2");
+        CHECK((new Mult(add1,n2)) ->to_string_pretty() == "(1 + 2) * 2");
+    }
+
 }
 
 TEST_CASE("Variable") {
@@ -128,5 +181,20 @@ TEST_CASE("Variable") {
         CHECK((new Variables("y"))
                       ->subst("x", new Variables("s"))
                       ->equals(new Variables("x")));
+    }
+
+    SECTION("print"){
+        CHECK(n1 ->to_string() == "1");
+        CHECK(v1 ->to_string() == "roger");
+    }
+
+    SECTION("pretty_print"){
+        CHECK(n1 ->to_string_pretty() == "1");
+        CHECK(v1 ->to_string_pretty() == "roger");
+    }
+
+    SECTION("pretty_print_at"){
+        CHECK(n1 ->to_string_pretty() == "1");
+        CHECK(v1 ->to_string_pretty() == "roger");
     }
 }
