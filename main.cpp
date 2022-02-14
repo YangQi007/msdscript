@@ -20,6 +20,7 @@ TEST_CASE("Num"){
 
     SECTION("equals"){
         CHECK(n2 ->equals(n3));
+        CHECK(n2 ->equals(NULL) == false);
         CHECK(!n1 ->equals(n3));
     }
 
@@ -68,6 +69,7 @@ TEST_CASE("Add") {
     SECTION("equals") {
         CHECK(add1->equals(add3) == true);
         CHECK(add1->equals(add2) == false);
+        CHECK(add1->equals(NULL) == false);
     }
 
     SECTION("interp"){
@@ -117,6 +119,7 @@ TEST_CASE("Mult"){
 
         CHECK(m1->equals(m3) == true);
         CHECK(m1->equals(m2) == false);
+        CHECK(m1->equals(NULL) == false);
     }
 
     SECTION("interp"){
@@ -162,6 +165,7 @@ TEST_CASE("Variable") {
         CHECK((new Variables("1"))->equals(new Variables("2")) == false);
         CHECK((new Variables("thomas"))->equals(new Variables("thomas")) == true);
         CHECK((new Variables("anna"))->equals(new Variables("anne")) == false);
+        CHECK((new Variables("1"))->equals(NULL) == false);
     }
 
     SECTION("interp"){

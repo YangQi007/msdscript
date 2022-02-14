@@ -13,3 +13,7 @@ expr.o : expr.cpp $(INCS)
 
 clean :
 	rm -f $(OBJS)
+
+.PHONY: test
+test: msdscript
+		./msdscript --test
