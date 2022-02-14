@@ -25,6 +25,7 @@ public:
     virtual void pretty_print(std::ostream &out) = 0;
     virtual void pretty_print_at(std::ostream &out,precedence_t p) = 0;
     std::string to_string();
+    std::string to_string_pretty();
 
 
 };

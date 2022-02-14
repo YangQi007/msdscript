@@ -4,6 +4,7 @@
 #include "catch.h"
 #include "expr.h"
 #include <stdexcept>
+#include <sstream>
 
 //subclass Num
 Num::Num(int val) {
@@ -33,15 +34,16 @@ Expr* Num::subst(std::string s, Expr *e) {
 }
 
 void Num::print(std::ostream &out) {
-
+    out << this->val;
 }
 
 void Num::pretty_print(std::ostream &out) {
+    pretty_print_at(out,prec_none);
 
 }
 
 void Num::pretty_print_at(std::ostream &out, precedence_t p) {
-
+    out << this->val;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -74,15 +76,29 @@ Expr* Add::subst(std::string s, Expr *e) {
 }
 
 void Add::print(std::ostream &out) {
-
+    out<<"(";
+    lhs->print(out);
+    out<<"+";
+    rhs->print(out);
+    out<<")";
 }
 
 void Add::pretty_print(std::ostream &out) {
+    pretty_print_at(out,prec_none);
 
 }
 
 void Add::pretty_print_at(std::ostream &out, precedence_t p) {
+    if (p == prec_add || p == prec_mult){
+        out << "(";
+    }
+    lhs->pretty_print_at(out,prec_add);
+    out << " + ";
+    rhs->pretty_print_at(out,prec_none);
 
+    if (p == prec_add || p == prec_mult){
+        out << ")";
+    }
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -115,14 +131,29 @@ Expr* Mult::subst(std::string s, Expr *e) {
 }
 
 void Mult::print(std::ostream &out) {
+    out<<"(";
+    lhs->print(out);
+    out<<"*";
+    rhs->print(out);
+    out<<")";
 
 }
 
 void Mult::pretty_print(std::ostream &out) {
+    pretty_print_at(out,prec_none );
 
 }
 
 void Mult::pretty_print_at(std::ostream &out, precedence_t p) {
+    if (p == prec_add || p == prec_mult){
+        out << "(";
+    }
+    lhs->pretty_print_at(out,prec_mult);
+    out << " * ";
+    rhs->pretty_print_at(out,prec_none);
+    if (p == prec_add || p == prec_mult){
+        out << ")";
+    }
 
 }
 
@@ -157,23 +188,32 @@ Expr* Variables::subst(std::string s, Expr *e) {
 }
 
 void Variables::print(std::ostream &out) {
+    out << this->val;
 
 }
 
 void Variables::pretty_print(std::ostream &out) {
+    pretty_print_at(out,prec_none);
 
 }
 
 void Variables::pretty_print_at(std::ostream &out, precedence_t p) {
+    out << this->val;
 
 }
 
 ////////////////////////////////////////////////////////////////////
 
 
-
-
-
 std::string Expr::to_string() {
-    return std::string();
+    std::stringstream ss;
+    this -> print(ss);
+    return ss.str();
 }
+
+std::string Expr::to_string_pretty() {
+    std::stringstream ss;
+    this ->pretty_print(ss);
+    return ss.str();
+}
+
