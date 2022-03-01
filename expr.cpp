@@ -6,6 +6,19 @@
 #include <stdexcept>
 #include <sstream>
 
+//Helper function to_string and to_string_pretty make it easier for testing
+std::string Expr::to_string() {
+    std::stringstream ss;
+    this -> print(ss);
+    return ss.str();
+}
+
+std::string Expr::to_string_pretty() {
+    std::stringstream ss;
+    this ->pretty_print(ss);
+    return ss.str();
+}
+
 //subclass Num
 Num::Num(int val) {
     this->val = val;
@@ -38,11 +51,10 @@ void Num::print(std::ostream &out) {
 }
 
 void Num::pretty_print(std::ostream &out) {
-    pretty_print_at(out,prec_none);
-
+    pretty_print_at(out,prec_none,0);
 }
 
-void Num::pretty_print_at(std::ostream &out, precedence_t p) {
+void Num::pretty_print_at(std::ostream &out, precedence_t p,long *positon) {
     out << this->val;
 }
 
@@ -84,19 +96,21 @@ void Add::print(std::ostream &out) {
 }
 
 void Add::pretty_print(std::ostream &out) {
-    pretty_print_at(out,prec_none);
+    long position = 0;
+    long *posi_ptr = &position;
+    pretty_print_at(out,prec_none,posi_ptr);
 
 }
 
-void Add::pretty_print_at(std::ostream &out, precedence_t p) {
-    if (p == prec_add || p == prec_mult){
+void Add::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
+    if (p == prec_add || p == prec_mult || p == prec_let){
         out << "(";
     }
-    lhs->pretty_print_at(out,prec_add);
+    lhs->pretty_print_at(out,prec_add,position);
     out << " + ";
-    rhs->pretty_print_at(out,prec_none);
+    rhs->pretty_print_at(out,prec_none,position);
 
-    if (p == prec_add || p == prec_mult){
+    if (p == prec_add || p == prec_mult || p == prec_let){
         out << ")";
     }
 }
@@ -140,18 +154,20 @@ void Mult::print(std::ostream &out) {
 }
 
 void Mult::pretty_print(std::ostream &out) {
-    pretty_print_at(out,prec_none );
+    long position = 0;
+    long *posi_ptr = &position;
+    pretty_print_at(out,prec_none,posi_ptr );
 
 }
 
-void Mult::pretty_print_at(std::ostream &out, precedence_t p) {
-    if (p == prec_add || p == prec_mult){
+void Mult::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
+    if (p == prec_add || p == prec_mult || p == prec_let){
         out << "(";
     }
-    lhs->pretty_print_at(out,prec_mult);
+    lhs->pretty_print_at(out,prec_mult, position);
     out << " * ";
-    rhs->pretty_print_at(out,prec_none);
-    if (p == prec_add || p == prec_mult){
+    rhs->pretty_print_at(out,prec_none, position);
+    if (p == prec_add || p == prec_mult || p == prec_let){
         out << ")";
     }
 
@@ -193,27 +209,94 @@ void Variables::print(std::ostream &out) {
 }
 
 void Variables::pretty_print(std::ostream &out) {
-    pretty_print_at(out,prec_none);
+    pretty_print_at(out,prec_none,0);
 
 }
 
-void Variables::pretty_print_at(std::ostream &out, precedence_t p) {
+void Variables::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
     out << this->val;
 
 }
 
 ////////////////////////////////////////////////////////////////////
-
-
-std::string Expr::to_string() {
-    std::stringstream ss;
-    this -> print(ss);
-    return ss.str();
+//_let expression subclass
+_let::_let(std::string lhs, Expr *rhs, Expr *body) {
+    this->lhs = lhs;
+    this->rhs = rhs;
+    this->body = body;
 }
 
-std::string Expr::to_string_pretty() {
-    std::stringstream ss;
-    this ->pretty_print(ss);
-    return ss.str();
+bool _let::equals(Expr *e) {
+    _let *n = dynamic_cast<_let *>(e);
+    if (n == NULL){
+        return false;
+    }else{
+        return (this->lhs == (n->lhs) && this->rhs ->equals(n->rhs)
+        && this->body ->equals(n->body));
+    }
 }
 
+int _let::interp() {
+    if (rhs->has_variable()){
+        return (this->body->subst(this->lhs,this->rhs))
+        ->interp();
+    }
+    else{
+        return (this->body->subst(this->lhs,new Num(rhs->interp())))
+                ->interp();
+    }
+
+}
+
+bool _let::has_variable() {
+    return (this->rhs->has_variable() || this->body->has_variable());
+}
+
+Expr *_let::subst(std::string s, Expr *e) {
+    if(s == this->lhs){
+        return new _let(this->lhs,this->rhs->subst(s,e),this->body);
+    }
+    else{
+        return new _let(this->lhs,this->rhs->subst(s,e),this->body->subst(s,e));
+    }
+}
+
+void _let::print(std::ostream &out) {
+    out << "(_let ";
+    out << this->lhs;
+    out<< "=";
+    this->rhs->print(out);
+    out << " _in ";
+    this->body->print(out);
+    out << ")";
+
+}
+
+void _let::pretty_print(std::ostream &out) {
+    long position = 0;
+    long *posi_ptr = &position;
+    pretty_print_at(out,prec_none,posi_ptr);
+
+}
+
+void _let::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
+    if (p == prec_add || p == prec_mult || p == prec_let){
+        out << "(";
+    }
+    long curr_posi = out.tellp();
+    long spaces = curr_posi - *position;
+    out << " _let " << lhs << " = ";
+    rhs->pretty_print_at(out,prec_none, position);
+    out << "\n";
+    *position = out.tellp();
+    int spaces_count = 0;
+    while (spaces_count < spaces){
+        out << " ";
+        spaces_count++;
+    }
+    out << "_in ";
+    body->pretty_print_at(out,prec_none, position);
+    if (p == prec_add || p == prec_mult || p == prec_let){
+        out << ")";
+    }
+}

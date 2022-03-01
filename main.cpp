@@ -201,4 +201,54 @@ TEST_CASE("Variable") {
         CHECK(n1 ->to_string_pretty() == "1");
         CHECK(v1 ->to_string_pretty() == "roger");
     }
+
+}
+
+TEST_CASE("_let"){
+    std::string lhs = "x";
+    std::string lhs1 = "y";
+
+    _let *let1 = new _let (lhs, new Num(5), new Add (new Variables("x"), new Num (1)));
+    _let *let2 = new _let (lhs, new Num(5), new Add (new Variables("x"), new Num (1)));
+    _let *let3 = new _let (lhs, new Num(5), new Add (new Variables("y"), new Num (1)));
+    _let *let4 = new _let (lhs, new Add(new Num(5),new Num(3)), new Add (new Variables("x"), new Num (1)));
+    _let *let5 = new _let (lhs, new Num(5), new _let (lhs,new Add(new Variables("x"),
+                                                                  new Num(2)), new Add(new Num (1),new Variables("x"))));
+   // _let *let6 = new _let (lhs, new Num(5), new Add(new Variables("x"),new _let (lhs1,new Num(3),
+                                                              //new Add(new Variables("y"),new Num (1)))));
+
+    SECTION("equals") {
+       CHECK(let1 ->equals (let2) == true);
+       CHECK(let1 ->equals (let3) == false);
+       CHECK(let1 ->equals (NULL) == false);
+    }
+
+    SECTION("interp"){
+        CHECK(let1 ->interp() == 6);
+        CHECK(let4 ->interp() == 9);
+        CHECK(let5 ->interp() == 8);
+        //CHECK(let6 ->interp() == 9);
+    }
+
+    SECTION("has_variable"){
+
+    }
+
+    SECTION("subst"){
+
+    }
+
+    SECTION("print"){
+
+    }
+
+    SECTION("pretty_print"){
+
+    }
+
+    SECTION("pretty_print_at"){
+
+    }
+
+
 }
