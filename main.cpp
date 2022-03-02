@@ -211,11 +211,15 @@ TEST_CASE("_let"){
     _let *let1 = new _let (lhs, new Num(5), new Add (new Variables("x"), new Num (1)));
     _let *let2 = new _let (lhs, new Num(5), new Add (new Variables("x"), new Num (1)));
     _let *let3 = new _let (lhs, new Num(5), new Add (new Variables("y"), new Num (1)));
-    _let *let4 = new _let (lhs, new Add(new Num(5),new Num(3)), new Add (new Variables("x"), new Num (1)));
+    _let *let4 = new _let (lhs, new Add(new Num(5),new Num(3)),new Add (new Variables("x"), new Num (1)));
     _let *let5 = new _let (lhs, new Num(5), new _let (lhs,new Add(new Variables("x"),
                                                                   new Num(2)), new Add(new Num (1),new Variables("x"))));
-   // _let *let6 = new _let (lhs, new Num(5), new Add(new Variables("x"),new _let (lhs1,new Num(3),
-                                                              //new Add(new Variables("y"),new Num (1)))));
+    _let *let6 = new _let (lhs, new Add(new Variables("x"),new Num(1)),new Num(1));
+    _let *let7 = new _let (lhs, new Num(5),new Num(6));
+    _let *let8 = new _let (lhs,new Add(new Variables("x"),new Num(1)),new Add(new Variables("x"),new Num(1)));
+    //(_let x=5 _in ((_let y=3 _in (y+2))+x))
+    _let *let9 = new _let(lhs,new Num(5),
+                          new Add(new _let("y",new Num(3),new Add(new Variables("y"),new Num(2))),new Variables("x")));
 
     SECTION("equals") {
        CHECK(let1 ->equals (let2) == true);
@@ -227,26 +231,47 @@ TEST_CASE("_let"){
         CHECK(let1 ->interp() == 6);
         CHECK(let4 ->interp() == 9);
         CHECK(let5 ->interp() == 8);
-        //CHECK(let6 ->interp() == 9);
     }
 
     SECTION("has_variable"){
+        CHECK(let6 ->has_variable() == true);
+        CHECK(let6 ->has_variable() == true);
+        CHECK(let7 ->has_variable() == false);
 
     }
 
     SECTION("subst"){
+        CHECK(let7 ->subst("x",new Num(5)) ->equals(let7));
+        CHECK(let8 ->subst("x",new Num(5)) ->equals(new _let(lhs,
+                new Add(new Num(5),new Num(1)),new Add(new Variables("x"),new Num(1)))));
 
+        CHECK(let7 ->subst("y",new Num(5)) ->equals(let7));
     }
 
     SECTION("print"){
+        CHECK(let1 ->to_string() == "(_let x=5 _in (x+1))");
+        CHECK(let5 ->to_string() == "(_let x=5 _in (_let x=(x+2) _in (1+x)))");
+        //(_let x=5 _in ((_let y=3 _in (y+2))+x))
+        CHECK(let9 ->to_string() == "(_let x=5 _in ((_let y=3 _in (y+2))+x))");
+
 
     }
 
     SECTION("pretty_print"){
+        CHECK(let1 ->to_string_pretty() == " _let x = 5\n_in x + 1");
+
+        CHECK(let5 ->to_string_pretty() == " _let x = 5\n"
+                                           "_in  _let x = x + 2\n"
+                                           "    _in 1 + x");
 
     }
 
     SECTION("pretty_print_at"){
+        CHECK(let1 ->to_string_pretty() == " _let x = 5\n_in x + 1");
+
+        CHECK(let5 ->to_string_pretty() == " _let x = 5\n"
+                                           "_in  _let x = x + 2\n"
+                                           "    _in 1 + x");
 
     }
 
