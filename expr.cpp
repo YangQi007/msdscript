@@ -237,15 +237,14 @@ bool _let::equals(Expr *e) {
 }
 
 int _let::interp() {
-    if (rhs->has_variable()){
-        return (this->body->subst(this->lhs,this->rhs))
-        ->interp();
-    }
-    else{
+//    if (rhs->has_variable()){
+//        return (this->body->subst(this->lhs,this->rhs))
+//        ->interp();
+//    }
+//    else{
         return (this->body->subst(this->lhs,new Num(rhs->interp())))
                 ->interp();
-    }
-
+        
 }
 
 bool _let::has_variable() {
