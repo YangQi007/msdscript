@@ -263,7 +263,7 @@ Expr *_let::subst(std::string s, Expr *e) {
 void _let::print(std::ostream &out) {
     out << "(_let ";
     out << this->lhs;
-    out<< "=";
+    out << "=";
     this->rhs->print(out);
     out << " _in ";
     this->body->print(out);
