@@ -3,6 +3,7 @@
 #define CATCH_CONFIG_RUNNER
 #include "catch.h"
 #include "expr.h"
+#include "parse.h"
 
 int main(int argc, char **argv) {
    // use_arguments(argc, argv);
@@ -272,6 +273,30 @@ TEST_CASE("_let"){
         CHECK(let5 ->to_string_pretty() == " _let x = 5\n"
                                            "_in  _let x = x + 2\n"
                                            "    _in 1 + x");
+
+    }
+
+}
+
+TEST_CASE("parse"){
+
+    SECTION("parse_num"){
+
+        CHECK(parse_str("123") -> equals(new Num(123)));
+        CHECK(parse_str("-123") -> equals(new Num(-123)));
+        CHECK(parse_str(" 123") -> equals(new Num(123)));
+        CHECK(parse_str("( -123 )") -> equals(new Num(-123)));
+    }
+
+    SECTION("parse_val"){
+
+    }
+
+    SECTION("parse_let"){
+
+    }
+
+    SECTION("parse_expr"){
 
     }
 
