@@ -1,5 +1,5 @@
 //
-// Created by YANG QI on 4/3/22.
+// Created by YANG QI on 4/2/22.
 //
 
 #include <istream>
@@ -41,7 +41,7 @@ Expr *parse_num(std::istream &in){
     }
 
     while (1){
-        int c = in.get();
+        int c = in.peek();
         if (isdigit(c)) {
             consume(in, c);
             n = n * 10 + (c - '0');
@@ -87,7 +87,7 @@ std::string parse_keyword(std::istream &in){
 //parse _let
 Expr *parse_let(std::istream &in){
     skip_whitespace(in);
-    std::string lhs = parse_val(in) -> to_string_pretty();
+    std::string lhs = parse_val(in) -> to_string();
     skip_whitespace(in);
     int c = in.peek();
     if (c == '='){

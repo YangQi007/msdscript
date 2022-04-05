@@ -2,6 +2,10 @@
 // Created by YANG QI on 2/1/22.
 //
 
+#define CATCH_CONFIG_RUNNER
+#include "catch.h"
+#include "expr.h"
+#include "parse.h"
 #include "cmdline.h"
 #include <iostream>
 
@@ -10,25 +14,44 @@ void use_arguments(int argc, char * argv[]){
         return;
     }
     if (argc > 1){
-        int count = 0;
+        bool test = false;
         for (int i = 1; i < argc; i++){
             std::string argus = argv[i];
             if (argus == "--help"){
-                std::cout<<"'--test' or '--help' is a valid argument,otherwise is invalid."<<"\n";
+                std::cout<<"Valid command lines: '--test' '--interp' '--print' '--pretty-print'."<<"\n";
                 exit(0);
             }
-            else if (argus == "--test" && count == 0){
-                std::cout<<"Tests passed"<<"\n";
+            else if (argus == "--test"){
+                if (test == false){
+                    if (Catch::Session().run(1,argv) != 0){
+                        std::cerr << "Tests failed!" << "\n";
+                        exit(1);
+                    }
+                    test = true;
+                }
+                else{
+                        std::cout << "Tested already!" <<"\n";
+                        exit(1);
+                    }
+                }
+            else if (argus == "--interp"){
+                Expr *input = parse_expr(std::cin);
+                int value = input->interp();
+                std::cout << value << "\n";
             }
-            else if (argus == "--test" && count >0){
-                std::cerr<<"Error! Please enter valid arguments" <<"\n";
-                exit(1);
+            else if (argus == "--print"){
+                Expr *input = parse_expr(std::cin);
+                input->print(std::cout);
+            }
+            else if (argus == "--pretty-print"){
+                Expr *input = parse_expr(std::cin);
+                std::cout << input->to_string_pretty();
             }
             else {
-                std::cerr<<"Error! Please enter valid arguments" <<"\n";
+                std::cerr << "Invalid Argument\n";
                 exit(1);
             }
-             count++;
+            std::cout << "\n";
         }
     }
 }

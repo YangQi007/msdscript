@@ -1,16 +1,14 @@
 #include "cmdline.h"
 #include <iostream>
-#define CATCH_CONFIG_RUNNER
-#include "catch.h"
 #include "expr.h"
 #include "parse.h"
 
 int main(int argc, char **argv) {
-   // use_arguments(argc, argv);
-    std::string temp = argv[1];
-    if(temp == "--test"){
-        Catch::Session().run(1,argv);
-    }
+    use_arguments(argc, argv);
+//    std::string temp = argv[1];
+//    if(temp == "--test"){
+//        Catch::Session().run(1,argv);
+//    }
     return 0;
 }
 
@@ -279,6 +277,7 @@ TEST_CASE("_let"){
 }
 
 TEST_CASE("parse"){
+    //std::string lhs = "x";
 
     SECTION("parse_num"){
 
@@ -286,19 +285,59 @@ TEST_CASE("parse"){
         CHECK(parse_str("-123") -> equals(new Num(-123)));
         CHECK(parse_str(" 123") -> equals(new Num(123)));
         CHECK(parse_str("( -123 )") -> equals(new Num(-123)));
+        CHECK_THROWS(parse_str("( -123" ));
     }
 
     SECTION("parse_val"){
 
+        CHECK(parse_str("Roger") -> equals(new Variables("Roger")));
+        CHECK(parse_str("thomas") -> equals(new Variables("thomas")));
+        CHECK(parse_str(" anna") -> equals(new Variables("anna")));
+
     }
 
     SECTION("parse_let"){
+        _let *let9 = new _let("x",new Num(5),
+                              new Add(new _let("y",new Num(3),new Add(new Variables("y"),new Num(2))),new Variables("x")));
+
+        CHECK(parse_str("_let x = 5 _in x+1") -> equals
+                (new _let ("x", new Num(5),
+                             new Add(new Variables("x"), new Num(1)))));
+        //(_let x=5 _in ((_let y=3 _in (y+2))+x))
+        CHECK((parse_str("_let x=5 _in ((_let y=3 _in (y+2))+x)") -> equals(let9)) == true);
+
 
     }
 
-    SECTION("parse_expr"){
+    SECTION("parse_expr,parse_addend,parse_multicand"){
+        CHECK(parse_str("1+2") -> equals(new Add(new Num(1), new Num(2))));
+        CHECK(parse_str("  1+2") -> equals(new Add(new Num(1), new Num(2))));
+        CHECK(parse_str("(1+2)") -> equals(new Add(new Num(1), new Num(2))));
+        CHECK(parse_str("-1+2") -> equals(new Add(new Num(-1), new Num(2))));
+
+        CHECK(parse_str("1*2") -> equals(new Mult(new Num(1), new Num(2))));
+        CHECK(parse_str("  1*2") -> equals(new Mult(new Num(1), new Num(2))));
+        CHECK(parse_str("(1*2)") -> equals(new Mult(new Num(1), new Num(2))));
+        CHECK(parse_str("-1*2") -> equals(new Mult(new Num(-1), new Num(2))));
+        CHECK(parse_str("x*y") -> equals(new Mult(new Variables("x"), new Variables("y"))));
+
+
+        CHECK(parse_str("1*2 + 1*2") -> equals(new Add(new Mult(new Num(1), new Num(2)),new Mult(new Num(1), new Num(2)))));
+        CHECK(parse_str("(1+2)*2") -> equals(new Mult(new Add(new Num(1), new Num(2)),new Num(2))));
+        CHECK(parse_str("(1+2)+2") -> equals(new Add(new Add(new Num(1), new Num(2)),new Num(2))));
+
+        CHECK((parse_str("_let x=5 _in _let x = x+2 _in x + 1")->equals
+        (new _let("x", new Num(5), new _let("x", new Add( new Variables("x"), new Num(2)), new Add(new Variables("x"), new Num(1)))))));
+
 
     }
+
+//    SECTION("parse_addend"){
+//
+//    }
+//    SECTION("parse_multicand"){
+//
+//    }
 
 
 }
