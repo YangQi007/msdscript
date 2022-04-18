@@ -31,5 +31,18 @@ public:
     std::string to_string() override;
 };
 
+class BoolVal : public Val{
+public:
+    bool val;
+    BoolVal (bool val);
+
+    bool equals(Val *val) override;
+    Val *add_to(Val *val) override;
+    Val *mult_to(Val *val) override;
+    Expr *to_expr() override;
+    std::string to_string() override;
+
+};
+
 
 #endif //MSDSCRIPT_VAL_H

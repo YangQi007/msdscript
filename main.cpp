@@ -25,8 +25,8 @@ TEST_CASE("NumExpr"){
     }
 
     SECTION("interp"){
-        CHECK(n1 ->interp() == 1);
-        CHECK(n2 ->interp() == 2);
+        CHECK(n1 ->interp() ->equals (new NumVal(1)));
+        CHECK(n2 ->interp() ->equals(new NumVal(2)));
     }
 
     SECTION("has_variable"){
@@ -73,8 +73,8 @@ TEST_CASE("AddExpr") {
     }
 
     SECTION("interp"){
-        CHECK(add1 ->interp() == 3);
-        CHECK(add2 ->interp() == 4);
+        CHECK(add1 ->interp() ->equals (new NumVal(3)));
+        CHECK(add2 ->interp()->equals (new NumVal(4)));
     }
 
     SECTION("has_variable"){
@@ -123,8 +123,8 @@ TEST_CASE("MultExpr"){
     }
 
     SECTION("interp"){
-        CHECK(m1 ->interp() == 2);
-        CHECK(m2 ->interp() == 3);
+        CHECK(m1 ->interp()->equals (new NumVal(2)));
+        CHECK(m2 ->interp() ->equals (new NumVal(3)));
     }
 
     SECTION("has_variable"){
@@ -228,9 +228,9 @@ TEST_CASE("_letExpr"){
     }
 
     SECTION("interp"){
-        CHECK(let1 ->interp() == 6);
-        CHECK(let4 ->interp() == 9);
-        CHECK(let5 ->interp() == 8);
+        CHECK(let1 ->interp() ->equals (new NumVal(6)));
+        CHECK(let4 ->interp() ->equals (new NumVal(9)));
+        CHECK(let5 ->interp() ->equals (new NumVal(8)));
     }
 
     SECTION("has_variable"){

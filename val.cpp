@@ -26,6 +26,8 @@ Val* interp()
 Expr* subst(...)
 void print(...), ...
  * **/
+
+//subclass numValue
 NumVal::NumVal(int val) {
     this -> val = val;
 
@@ -58,4 +60,36 @@ Expr *NumVal::to_expr() {
 
 std::string NumVal::to_string() {
     return std::to_string(this -> val);
+}
+
+
+//subclass boolValue
+BoolVal::BoolVal(bool val) {
+    this -> val = val;
+}
+
+bool BoolVal::equals(Val *val) {
+    BoolVal *boolVal = dynamic_cast<BoolVal *>(val);
+    if (boolVal == NULL)
+    return false;
+    return this ->val == boolVal -> val;
+}
+
+Val *BoolVal::add_to(Val *val) {
+    throw std::runtime_error("Cannot add BooVal type.");
+}
+
+Val *BoolVal::mult_to(Val *val) {
+    throw std::runtime_error("Cannot multiply BooVal type.");
+}
+
+Expr *BoolVal::to_expr() {
+    return NULL;
+}
+
+std::string BoolVal::to_string() {
+    if (this -> val)
+        return "_true";
+    else
+        return "_false";
 }

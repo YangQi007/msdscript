@@ -36,7 +36,7 @@ void use_arguments(int argc, char * argv[]){
                 }
             else if (argus == "--interp"){
                 Expr *input = parse_expr(std::cin);
-                int value = input->interp();
+                Val *value = input->interp();
                 std::cout << value << "\n";
             }
             else if (argus == "--print"){

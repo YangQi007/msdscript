@@ -7,6 +7,7 @@
 #include <string>
 #include <stdio.h>
 #include "catch.h"
+#include "val.h"
 #include <iostream>
 
 typedef enum {
@@ -19,7 +20,7 @@ typedef enum {
 class Expr{
 public:
     virtual bool equals(Expr *e) = 0;
-    virtual int interp() = 0;
+    virtual Val * interp() = 0;
     virtual bool has_variable() = 0;
     virtual Expr* subst(std::string s, Expr *e) = 0;
     virtual void print(std::ostream &out) = 0;
@@ -36,7 +37,7 @@ public:
 
     NumExpr(int val);
     bool equals(Expr *e) override;
-    int interp() override;
+    Val * interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
@@ -52,7 +53,7 @@ public:
 
     AddExpr(Expr *lhs, Expr *rhs);
     bool equals(Expr *e) override;
-    int interp() override;
+    Val * interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
@@ -69,7 +70,7 @@ public:
 
     MultExpr(Expr *lhs, Expr *rhs);
     bool equals(Expr *e) override;
-    int interp() override;
+    Val * interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
@@ -84,7 +85,7 @@ public:
 
     VarExpr(std::string val);
     bool equals(Expr *e) override;
-    int interp() override;
+    Val * interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
@@ -101,12 +102,32 @@ public:
 
     _letExpr(std::string lhs, Expr *rhs, Expr *body);
     bool equals(Expr *e) override;
-    int interp() override;
+    Val * interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+
+};
+
+class BoolExpr : public Expr{
+public:
+    bool val;
+
+    BoolExpr(bool val);
+    bool equals(Expr *e) override;
+    Val * interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr *e) override;
+    void print(std::ostream &out) override;
+    void pretty_print(std::ostream &out) override;
+    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+
+};
+
+class EqualExpr : public Expr{
+public:
 
 };
 
