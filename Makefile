@@ -1,6 +1,6 @@
-INCS = expr.h catch.h parse.h cmdline.h
+INCS = expr.h catch.h parse.h cmdline.h val.h
 
-OBJS = main.o expr.o parse.o cmdline.o
+OBJS = main.o expr.o parse.o cmdline.o val.o
 
 msdscript: $(OBJS)
 	c++ --std=c++14 -O2 -o msdscript $(OBJS)
@@ -16,6 +16,9 @@ parse.o : parse.cpp $(INCS)
 
 cmdline.o : cmdline.cpp $(INCS)
 	c++ --std=c++14 -O2 -c cmdline.cpp
+
+val.o : val.cpp $(INCS)
+	c++ --std=c++14 -O2 -c val.cpp
 
 clean :
 	rm -f $(OBJS)

@@ -28,14 +28,13 @@ public:
     std::string to_string();
     std::string to_string_pretty();
 
-
 };
 
-class Num : public Expr{
+class NumExpr : public Expr{
 public:
     int val;
 
-    Num(int val);
+    NumExpr(int val);
     bool equals(Expr *e) override;
     int interp() override;
     bool has_variable() override;
@@ -46,12 +45,12 @@ public:
 
 };
 
-class Add : public Expr{
+class AddExpr : public Expr{
 public:
     Expr *lhs;
     Expr *rhs;
 
-    Add(Expr *lhs, Expr *rhs);
+    AddExpr(Expr *lhs, Expr *rhs);
     bool equals(Expr *e) override;
     int interp() override;
     bool has_variable() override;
@@ -63,12 +62,12 @@ public:
 
 };
 
-class Mult : public Expr{
+class MultExpr : public Expr{
 public:
     Expr *lhs;
     Expr *rhs;
 
-    Mult(Expr *lhs, Expr *rhs);
+    MultExpr(Expr *lhs, Expr *rhs);
     bool equals(Expr *e) override;
     int interp() override;
     bool has_variable() override;
@@ -79,11 +78,11 @@ public:
 
 };
 
-class Variables : public Expr{
+class VarExpr : public Expr{
 public:
     std::string val;
 
-    Variables(std::string val);
+    VarExpr(std::string val);
     bool equals(Expr *e) override;
     int interp() override;
     bool has_variable() override;
@@ -94,13 +93,13 @@ public:
 
 };
 
-class _let : public Expr{
+class _letExpr : public Expr{
 public:
     std::string lhs;
     Expr *rhs;
     Expr *body;
 
-    _let(std::string lhs,Expr *rhs,Expr *body);
+    _letExpr(std::string lhs, Expr *rhs, Expr *body);
     bool equals(Expr *e) override;
     int interp() override;
     bool has_variable() override;

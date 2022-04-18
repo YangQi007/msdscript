@@ -50,7 +50,7 @@ Expr *parse_num(std::istream &in){
     }
     if (negative)
         n = -n;
-    return new Num(n);
+    return new NumExpr(n);
 }
 
 // parse variable
@@ -64,7 +64,7 @@ Expr *parse_val(std::istream &in){
         }else
             break;
     }
-    return new Variables(val);
+    return new VarExpr(val);
 }
 
 //parse keyword
@@ -84,7 +84,7 @@ std::string parse_keyword(std::istream &in){
     return keyword;
 }
 
-//parse _let
+//parse _letExpr
 Expr *parse_let(std::istream &in){
     skip_whitespace(in);
     std::string lhs = parse_val(in) -> to_string();
@@ -103,7 +103,7 @@ Expr *parse_let(std::istream &in){
     }
     skip_whitespace(in);
     Expr *body = parse_expr(in);
-    return new _let(lhs,rhs,body);
+    return new _letExpr(lhs, rhs, body);
 }
 
 /*
@@ -151,7 +151,7 @@ Expr *parse_expr(std::istream &in){
     if (c == '+'){
         consume(in, '+');
         Expr *rhs = parse_expr(in);
-        return new Add(e,rhs);
+        return new AddExpr(e, rhs);
     }else
         return e;
 }
@@ -170,7 +170,7 @@ Expr *parse_addend(std::istream &in){
     if (c == '*'){
         consume(in, '*');
         Expr *rhs = parse_addend(in);
-        return new Mult(e,rhs);
+        return new MultExpr(e, rhs);
     }else
         return e;
 }
@@ -180,7 +180,7 @@ Expr *parse_addend(std::istream &in){
 <multicand> = <number>
             | ( <expr> )
             | <variable>
-            | _let <variable> = <expr> _in <expr>
+            | _letExpr <variable> = <expr> _in <expr>
  **/
 
 Expr *parse_multicand(std::istream &in) {
@@ -205,10 +205,10 @@ Expr *parse_multicand(std::istream &in) {
     else if (isalpha(c)) {
         return parse_val(in);
     }
-        //grammar _let
+        //grammar _letExpr
     else if (c == '_') {
         std::string keyword = parse_keyword(in);
-        if (keyword == "_let") {
+        if (keyword == "_letExpr") {
             return parse_let(in);
         }
     }
