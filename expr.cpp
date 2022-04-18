@@ -3,6 +3,7 @@
 //
 #include "catch.h"
 #include "expr.h"
+#include "val.h"
 #include <stdexcept>
 #include <sstream>
 
@@ -34,8 +35,8 @@ bool NumExpr::equals(Expr *e) {
     }
 }
 
-int NumExpr::interp() {
-    return this->val;
+Val * NumExpr::interp() {
+    return new NumVal (this->val);
 }
 
 bool NumExpr::has_variable() {
@@ -75,8 +76,8 @@ bool AddExpr::equals(Expr *e) {
     }
 }
 
-int AddExpr::interp() {
-    return (this->lhs->interp() + this->rhs->interp());
+Val * AddExpr::interp() {
+    return ((this->lhs->interp()) -> add_to(this->rhs->interp()));
 }
 
 bool AddExpr::has_variable() {
@@ -132,8 +133,8 @@ bool MultExpr::equals(Expr *e) {
     }
 }
 
-int MultExpr::interp() {
-    return (this->lhs->interp() * this->rhs->interp());
+Val * MultExpr::interp() {
+    return ((this->lhs->interp()) -> mult_to( this->rhs->interp()));
 }
 
 bool MultExpr::has_variable() {
@@ -188,7 +189,7 @@ bool VarExpr::equals(Expr *e) {
     }
 }
 
-int VarExpr::interp() {
+Val * VarExpr::interp() {
     throw std::runtime_error("no value for variable");
 }
 
@@ -236,9 +237,9 @@ bool _letExpr::equals(Expr *e) {
     }
 }
 
-int _letExpr::interp() {
+Val * _letExpr::interp() {
 
-        return (this->body->subst(this->lhs,new NumExpr(rhs->interp())))
+        return (this->body->subst(this->lhs,(rhs->interp())->to_expr()))
                 ->interp();
         
 }
@@ -294,4 +295,37 @@ void _letExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position
     if (p == prec_add || p == prec_mult || p == prec_let){
         out << ")";
     }
+}
+
+// boolean expression
+BoolExpr::BoolExpr(bool val) {
+
+}
+
+bool BoolExpr::equals(Expr *e) {
+    return false;
+}
+
+Val * BoolExpr::interp() {
+    return 0;
+}
+
+bool BoolExpr::has_variable() {
+    return false;
+}
+
+Expr *BoolExpr::subst(std::string s, Expr *e) {
+    return nullptr;
+}
+
+void BoolExpr::print(std::ostream &out) {
+
+}
+
+void BoolExpr::pretty_print(std::ostream &out) {
+
+}
+
+void BoolExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
+
 }
