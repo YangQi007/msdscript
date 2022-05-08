@@ -59,7 +59,7 @@ TEST_CASE("AddExpr") {
     NumExpr *n1 = new NumExpr(1);
     NumExpr *n2 = new NumExpr(2);
     NumExpr *n3 = new NumExpr(3);
-    AddExpr *add1 = new AddExpr(n1, n2);
+    AddExpr *add1= new AddExpr(n1, n2);
     AddExpr *add2 = new AddExpr(n1, n3);
     AddExpr *add3 = new AddExpr(n1, n2);
     MultExpr *m1 = new MultExpr(n1, n2);
@@ -73,12 +73,12 @@ TEST_CASE("AddExpr") {
     }
 
     SECTION("interp"){
-        CHECK(add1 ->interp() ->equals (new NumVal(3)));
+        CHECK( add1->interp() ->equals (new NumVal(3)));
         CHECK(add2 ->interp()->equals (new NumVal(4)));
     }
 
     SECTION("has_variable"){
-        CHECK(add1 ->has_variable() == false);
+        CHECK( add1->has_variable() == false);
         CHECK(!add2 ->has_variable() == true);
 
     }
@@ -367,5 +367,206 @@ TEST_CASE("Value refactor"){
         CHECK((n2 -> to_string() == "1" ) == false);
     }
 
+}
+
+TEST_CASE("subclass boolValue"){
+    Val *n1 = new BoolVal(true);
+    Val *n2 = new BoolVal(false);
+    Val *n3 = new BoolVal(true);
+    Val *n4 = new BoolVal(false);
+    Val *n5 = new NumVal (1);
+
+    SECTION("equals"){
+        CHECK(n1 -> equals(n2) == false);
+        CHECK(n2 -> equals(n4) == true);
+        CHECK(n1 -> equals(n5) == false);
+    }
+
+    SECTION("add_to"){
+        CHECK_THROWS_WITH(n1 -> add_to(n2),"Cannot add BooVal type.");
+        CHECK_THROWS_WITH(n1 -> add_to(n5),"Cannot add BooVal type.");
+    }
+
+    SECTION("mult_to"){
+        CHECK_THROWS_WITH(n1 -> mult_to(n2),"Cannot multiply BooVal type.");
+        CHECK_THROWS_WITH(n1 -> mult_to(n5),"Cannot multiply BooVal type.");
+    }
+
+    SECTION("to_expr"){
+        CHECK((n1 -> to_expr()) == NULL);
+    }
+
+    SECTION("to_string"){
+        CHECK(((n1 -> to_string()) == "_true") == true);
+        CHECK(((n2 -> to_string()) == "_false") == true);
+        CHECK(((n1 -> to_string()) == "_false") == false);
+    }
+}
+
+TEST_CASE("BoolExpr"){
+    BoolExpr *n1 = new BoolExpr(true);
+    BoolExpr *n2 = new BoolExpr(false);
+    BoolExpr *n3 = new BoolExpr(true);
+    NumExpr *n4 = new NumExpr(1);
+
+    SECTION("equals"){
+        CHECK(n1 ->equals(n3));
+        CHECK(n2 ->equals(NULL) == false);
+        CHECK(n2 ->equals(n4) == false);
+        CHECK(!n1 ->equals(n2));
+    }
+
+    SECTION("interp"){
+        CHECK(n1 ->interp() ->equals (new BoolVal(true)));
+        CHECK(n2 ->interp() ->equals(new BoolVal(false)));
+    }
+
+    SECTION("has_variable"){
+        CHECK(n1 ->has_variable() == false);
+        CHECK(!n2 ->has_variable() == true);
+
+    }
+
+    SECTION("subst"){
+        CHECK(n1 ->subst("x",new NumExpr(4)) ->equals(new BoolExpr(true)));
+        CHECK(n2 ->subst("x",new NumExpr(4)) ->equals(new BoolExpr(false)));
+    }
+
+    SECTION("print"){
+        CHECK(n1 ->to_string() == "_true");
+        CHECK(n2 ->to_string() == "_false");
+    }
+
+    SECTION("pretty_print"){
+        CHECK(n1 ->to_string_pretty() == "_true");
+        CHECK(n2 ->to_string_pretty() == "_false");
+    }
+
+    SECTION("pretty_print_at"){
+        CHECK(n1 ->to_string_pretty() == "_true");
+        CHECK(n2 ->to_string_pretty() == "_false");
+    }
+}
+
+TEST_CASE("EqualExpr") {
+    NumExpr *n1 = new NumExpr(1);
+    VarExpr *v1 = new VarExpr("1");
+    NumExpr *n2 = new NumExpr(2);
+    NumExpr *n3 = new NumExpr(3);
+    AddExpr *n4 = new AddExpr(n1,n2);
+    EqualExpr *n5 = new EqualExpr(n3, n4);
+    EqualExpr *n6 = new EqualExpr(n3, n4);
+    EqualExpr *n7 = new EqualExpr(n1, n2);
+    EqualExpr *n8 = new EqualExpr(n1, v1);
+
+//    MultExpr *m1 = new MultExpr(n1, n2);
+//    MultExpr *m2 = new MultExpr(n1, n3);
+//    MultExpr *m3 = new MultExpr(n1, n2);
+
+    SECTION("equals") {
+        CHECK(n5->equals(n6) == true);
+        CHECK(n5->equals(n7) == false);
+        CHECK(n5->equals(NULL) == false);
+    }
+
+    SECTION("interp"){
+        CHECK(( n5->interp() ->equals (new BoolVal(true))) == true);
+        CHECK((n5 ->interp()->equals (new BoolVal(false))) == false);
+    }
+
+    SECTION("has_variable"){
+        CHECK( n5->has_variable() == false);
+        CHECK( n8 ->has_variable() == true);
+
+    }
+
+    SECTION("subst"){
+        CHECK( (new EqualExpr(new VarExpr("x"), new NumExpr(7)))
+                       ->subst("x", new VarExpr("y"))
+                       ->equals(new EqualExpr(new VarExpr("y"), new NumExpr(7))) );
+    }
+
+    SECTION("print"){
+        CHECK((new EqualExpr(n4, n3)) ->to_string() == "((1+2)==3)");
+        CHECK((new EqualExpr(new NumExpr(3), n3)) ->to_string() == "(3==3)");
+    }
+
+    SECTION("pretty_print"){
+        CHECK((new EqualExpr(n4, n3))  ->to_string_pretty() == "1 + 2 == 3");
+        CHECK((new EqualExpr(new NumExpr(3), n3)) ->to_string_pretty() == "3 == 3");
+        CHECK((new EqualExpr(new MultExpr(new AddExpr(new NumExpr(1),new NumExpr(2)),new NumExpr(1)), n3))  ->to_string_pretty() == "(1 + 2) * 1 == 3");
+
+    }
+
+    SECTION("pretty_print_at"){
+        CHECK((new EqualExpr(n4, n3))  ->to_string_pretty() == "1 + 2 == 3");
+        CHECK((new EqualExpr(new NumExpr(3), n3)) ->to_string_pretty() == "3 == 3");
+        CHECK((new EqualExpr(new MultExpr(new AddExpr(new NumExpr(1),new NumExpr(2)),new NumExpr(1)), n3))  ->to_string_pretty() == "(1 + 2) * 1 == 3");
+    }
 
 }
+
+
+TEST_CASE("IfExpr"){
+    // _if 3 == 1 + 2
+    // _then 3
+    // _else 1
+    IfExpr *n1 = new IfExpr(new EqualExpr(new NumExpr(3),new AddExpr(new NumExpr(1),new NumExpr(2))),new NumExpr(3),new NumExpr(1));
+
+    // _if 2 == 1 + 2
+    // _then 3
+    // _else 1
+    IfExpr *n2 = new IfExpr(new EqualExpr(new NumExpr(2),new AddExpr(new NumExpr(1),new NumExpr(2))),new NumExpr(3),new NumExpr(1));
+
+    // _if 3 == 1 + 2
+    // _then x
+    // _else y
+    IfExpr *n3 = new IfExpr(new EqualExpr(new NumExpr(3),new AddExpr(new NumExpr(1),new NumExpr(2))),new VarExpr("x"),new VarExpr("y"));
+    SECTION("equals"){
+        CHECK(n1 ->equals(NULL) == false);
+        CHECK(n1 ->equals(new IfExpr(new EqualExpr(new NumExpr(3),new AddExpr(new NumExpr(1),new NumExpr(2))),new NumExpr(3),new NumExpr(1))) == true);
+    }
+
+    SECTION("interp"){
+        CHECK((n1 -> interp()) -> equals(new NumVal(3)) == true);
+        CHECK((n1 -> interp()) -> equals(new NumVal(1)) == false);
+        CHECK((n2 -> interp()) -> equals(new NumVal(3)) == false);
+        CHECK((n2 -> interp()) -> equals(new NumVal(1)) == true);
+    }
+
+    SECTION("has_variable"){
+        CHECK(n1 ->has_variable() == false);
+        CHECK(n3 ->has_variable() == true);
+
+    }
+
+    SECTION("subst"){
+        IfExpr *n4 = new IfExpr(new EqualExpr(new NumExpr(3),new AddExpr(new NumExpr(1),new NumExpr(2))),new VarExpr("y"),new VarExpr("x"));
+        CHECK(n3 ->subst("x",new VarExpr("y")) ->equals(n4) == true);
+    }
+
+    SECTION("print"){
+        CHECK(n1 ->to_string() ==  "(_if (3==(1+2)) _then 3 _else 1)");
+        CHECK(n3 ->to_string() ==  "(_if (3==(1+2)) _then x _else y)");
+    }
+
+    SECTION("pretty_print"){
+        CHECK(n1 ->to_string_pretty() == " _if 3 == 1 + 2\n"
+                                         "_then 3\n"
+                                         "_else 1");
+        CHECK(n3 ->to_string_pretty() ==   " _if 3 == 1 + 2\n"
+                                           "_then x\n"
+                                           "_else y");
+    }
+
+    SECTION("pretty_print_at"){
+        CHECK(n1 ->to_string_pretty() == " _if 3 == 1 + 2\n"
+                                         "_then 3\n"
+                                         "_else 1");
+        CHECK(n3 ->to_string_pretty() ==   " _if 3 == 1 + 2\n"
+                                           "_then x\n"
+                                           "_else y");
+    }
+}
+
+

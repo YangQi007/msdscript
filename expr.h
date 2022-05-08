@@ -14,7 +14,8 @@ typedef enum {
     prec_none,      // = 0
     prec_add,       // = 1
     prec_mult,       // = 2
-    prec_let        // = 3
+    prec_let,        // = 3
+    prec_eq
 } precedence_t;
 
 class Expr{
@@ -128,6 +129,34 @@ public:
 
 class EqualExpr : public Expr{
 public:
+    Expr *lhs;
+    Expr *rhs;
+
+    EqualExpr(Expr *lhs, Expr *rhs);
+    bool equals(Expr *e) override;
+    Val * interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr *e) override;
+    void print(std::ostream &out) override;
+    void pretty_print(std::ostream &out) override;
+    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+
+};
+
+class IfExpr : public Expr{
+public:
+    Expr *condition;
+    Expr *then_part;
+    Expr *else_part;
+
+    IfExpr(Expr *condition, Expr *then_part, Expr *else_part);
+    bool equals(Expr *e) override;
+    Val * interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr *e) override;
+    void print(std::ostream &out) override;
+    void pretty_print(std::ostream &out) override;
+    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
 
 };
 
