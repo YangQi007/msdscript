@@ -88,7 +88,7 @@ Val *BoolVal::mult_to(Val *val) {
 }
 
 Expr *BoolVal::to_expr() {
-    return NULL;
+    return new BoolExpr(this ->val);
 }
 
 std::string BoolVal::to_string() {

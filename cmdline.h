@@ -6,6 +6,7 @@
 #define MSDSCRIPT_CMDLINE_H
 
 #include <stdio.h>
+#include "pointer.h"
 
 void use_arguments(int argc, char * argv[]);
 #endif //MSDSCRIPT_CMDLINE_H

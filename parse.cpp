@@ -264,7 +264,7 @@ Expr *parse_multicand(std::istream &in){
 <inner> = <number>
             | ( <expr> )
             | <variable>
-            | _letExpr <variable> = <expr> _in <expr>
+            | _let <variable> = <expr> _in <expr>
             | _true
             | _false
             | _if <expr> _then <expr> _else <expr>
@@ -296,7 +296,7 @@ Expr *parse_inner(std::istream &in) {
         //grammar _letExpr _ifExpr _true _false _fun
     else if (c == '_') {
         std::string keyword = parse_keyword(in);
-        if (keyword == "_letExpr") {
+        if (keyword == "_let") {
             return parse_let(in);
         }
         else if(keyword == "_true"){
