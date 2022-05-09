@@ -612,7 +612,7 @@ TEST_CASE("FunExpr") {
     SECTION("subst"){
 
         CHECK((n1 -> subst("x", new NumExpr(3))) -> equals (new FunExpr("x",
-                                                                          new AddExpr(new NumExpr(3), new NumExpr(2)))));
+                                                                          new AddExpr(new VarExpr("x"), new NumExpr(2)))));
         CHECK((n1 -> subst("y", new NumExpr(3))) -> equals (n1));
     }
 
@@ -646,7 +646,7 @@ TEST_CASE("CallExpr") {
 
     SECTION("subst") {
         CHECK(n2->subst("x", new NumExpr(3))->equals
-                (new CallExpr(new FunExpr("x",new AddExpr(new NumExpr(3), new NumExpr(2))),
+                (new CallExpr(new FunExpr("x",new AddExpr(new VarExpr("x"), new NumExpr(2))),
                               new NumExpr(1))));
         CHECK(n1->subst("y", new NumExpr(3))->equals(n1));
     }
