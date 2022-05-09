@@ -481,6 +481,7 @@ void IfExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) 
     }
 }
 
+
 //subclass Functions
 FunExpr::FunExpr(std::string formal_arg, Expr *body) {
     this -> formal_arg = formal_arg;
@@ -495,22 +496,22 @@ bool FunExpr::equals(Expr *e) {
 }
 
 Val *FunExpr::interp() {
-    return new FunVal(formal_arg, body);
+    return new FunVal(this->formal_arg, this->body);
 }
 
 Expr *FunExpr::subst(std::string s, Expr *e) {
-//    if (s == formal_arg)
-//        return new FunExpr(formal_arg, body);
-    if (s != formal_arg)
-        return this;
+    if (s == formal_arg)
+        return new FunExpr(this->formal_arg, this->body);
+//    if (s != formal_arg)
+//        return this;
     else
-        return new FunExpr(formal_arg, body -> subst(s, e));
+        return new FunExpr(this->formal_arg, body -> subst(s, e));
 }
 
-void FunExpr::print(std::ostream &os) {
-    os << "(_fun (" << formal_arg << ") ";
-    this -> body -> print(os);
-    os << ")";
+void FunExpr::print(std::ostream &out) {
+    out << "(_fun (" << this->formal_arg << ") ";
+    this -> body -> print(out);
+    out << ")";
 }
 
 bool FunExpr::has_variable() {
@@ -547,11 +548,11 @@ Expr *CallExpr::subst(std::string s, Expr *e) {
                         actual_arg -> subst(s, e));
 }
 
-void CallExpr::print(std::ostream &os) {
-    this -> to_be_called->print(os);
-    os << "(";
-    this -> actual_arg->print(os);
-    os << ")";
+void CallExpr::print(std::ostream &out) {
+    this -> to_be_called->print(out);
+    out << "(";
+    this -> actual_arg->print(out);
+    out << ")";
 }
 
 bool CallExpr::has_variable() {

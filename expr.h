@@ -171,9 +171,9 @@ public:
      Val* interp() override;
      bool has_variable() override;
      Expr* subst(std::string s, Expr *e) override;
-     void print(std::ostream& os) override;
-    void pretty_print(std::ostream &out) override;
-    void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+     void print(std::ostream& out) override;
+     void pretty_print(std::ostream &out) override;
+     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
 
 };
 
@@ -188,7 +188,7 @@ public:
     Val* interp() override;
     bool has_variable() override;
     Expr* subst(std::string s, Expr *e) override;
-    void print(std::ostream& os) override;
+    void print(std::ostream& out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
 
