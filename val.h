@@ -7,6 +7,8 @@
 
 #include <stdio.h>
 #include <string>
+#include "pointer.h"
+
 class Expr;
 
 class Val {

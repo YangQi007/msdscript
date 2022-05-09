@@ -201,7 +201,7 @@ Expr* VarExpr::subst(std::string s, Expr *e) {
     if (this->val == s ){
         return e;
     }else
-        return new VarExpr(s);
+        return this;
 }
 
 void VarExpr::print(std::ostream &out) {
@@ -258,7 +258,7 @@ Expr *_letExpr::subst(std::string s, Expr *e) {
 }
 
 void _letExpr::print(std::ostream &out) {
-    out << "(_letExpr ";
+    out << "(_let ";
     out << this->lhs;
     out << "=";
     this->rhs->print(out);
@@ -281,7 +281,7 @@ void _letExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position
     }
     long curr_posi = out.tellp();
     long spaces = curr_posi - *position;
-    out << " _letExpr " << lhs << " = ";
+    out << " _let " << lhs << " = ";
     rhs->pretty_print_at(out,prec_none, position);
     out << "\n";
     *position = out.tellp();

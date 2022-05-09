@@ -9,6 +9,7 @@
 #include "catch.h"
 #include "val.h"
 #include <iostream>
+#include "pointer.h"
 
 typedef enum {
     prec_none,      // = 0
