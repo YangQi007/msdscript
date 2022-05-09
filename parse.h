@@ -15,8 +15,10 @@ Expr *parse_num(std::istream &in);
 Expr *parse_val(std::istream &in);
 std::string parse_keyword(std::istream &in);
 Expr *parse_let(std::istream &in);
+Expr *parse_if(std::istream &in);
 
 Expr *parse_expr(std::istream &in);
+Expr *parse_comparg(std::istream &in);
 Expr *parse_addend(std::istream &in);
 Expr *parse_multicand(std::istream &in);
 

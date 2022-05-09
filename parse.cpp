@@ -106,6 +106,24 @@ Expr *parse_let(std::istream &in){
     return new _letExpr(lhs, rhs, body);
 }
 
+//parse _IfExpr
+Expr *parse_if(std::istream &in){
+    skip_whitespace(in);
+    Expr *condition = parse_expr(in);
+    skip_whitespace(in);
+    if(parse_keyword(in) != "_then"){
+        throw std::runtime_error("then is required");
+}
+    skip_whitespace(in);
+    Expr *then_part = parse_expr(in);
+    skip_whitespace(in);
+    if(parse_keyword(in) != "_else"){
+        throw std::runtime_error("else is required");
+}
+    Expr *else_part = parse_expr(in);
+    return new IfExpr(condition, then_part, else_part);
+}
+
 /*
 <addend> = <number>
          | ( <expr> )
@@ -136,12 +154,36 @@ Expr *parse_let(std::istream &in){
 
 
 
-/* <expr> = <addend>
-          | <addend> + <expr>
+/* <expr> = <comparg>
+          | <comparg> == <expr>
 
 **/
 
 Expr *parse_expr(std::istream &in){
+    Expr *e;
+
+    e = parse_comparg(in);
+    skip_whitespace(in);
+
+    int c = in.peek();
+    if (c == '='){
+        consume(in, '=');
+        c=in.peek();
+        if (c == '='){
+            consume(in, '=');
+            Expr *rhs = parse_expr(in);
+            return new EqualExpr(e,rhs);
+        }
+    } else
+        return e;
+}
+
+/* <expr> = <addend>
+          | <addend> + <comparg>
+
+**/
+
+Expr *parse_comparg(std::istream &in){
     Expr *e;
 
     e = parse_addend(in);
@@ -150,7 +192,7 @@ Expr *parse_expr(std::istream &in){
     int c = in.peek();
     if (c == '+'){
         consume(in, '+');
-        Expr *rhs = parse_expr(in);
+        Expr *rhs = parse_comparg(in);
         return new AddExpr(e, rhs);
     }else
         return e;
@@ -181,6 +223,9 @@ Expr *parse_addend(std::istream &in){
             | ( <expr> )
             | <variable>
             | _letExpr <variable> = <expr> _in <expr>
+            | _true
+            | _false
+            | _if <expr> _then <expr> _else <expr>
  **/
 
 Expr *parse_multicand(std::istream &in) {
@@ -205,11 +250,20 @@ Expr *parse_multicand(std::istream &in) {
     else if (isalpha(c)) {
         return parse_val(in);
     }
-        //grammar _letExpr
+        //grammar _letExpr _ifExpr _true _false
     else if (c == '_') {
         std::string keyword = parse_keyword(in);
         if (keyword == "_letExpr") {
             return parse_let(in);
+        }
+        else if(keyword == "_true"){
+            return new BoolExpr(true);
+        }
+        else if(keyword == "_false"){
+            return new BoolExpr(false);
+        }
+        else if(keyword == "_if"){
+            return parse_if(in);
         }
     }
 

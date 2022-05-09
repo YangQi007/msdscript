@@ -307,14 +307,24 @@ TEST_CASE("parse"){
         //(_letExpr x=5 _in ((_letExpr y=3 _in (y+2))+x))
         CHECK((parse_str("_letExpr x=5 _in ((_letExpr y=3 _in (y+2))+x)") -> equals(let9)) == true);
 
+    }
+
+    SECTION("parse_if"){
+
+        CHECK(parse_str("_if 3 == 1+2 _then 3 _else 0") -> equals
+                (new IfExpr (new EqualExpr(new NumExpr(3),new AddExpr(new NumExpr(1),new NumExpr(2)))
+                             ,new NumExpr(3),new NumExpr(0))));
 
     }
 
-    SECTION("parse_expr,parse_addend,parse_multicand"){
+    SECTION("parse_expr,parse_comparg,parse_addend,parse_multicand"){
         CHECK(parse_str("1+2") -> equals(new AddExpr(new NumExpr(1), new NumExpr(2))));
         CHECK(parse_str("  1+2") -> equals(new AddExpr(new NumExpr(1), new NumExpr(2))));
         CHECK(parse_str("(1+2)") -> equals(new AddExpr(new NumExpr(1), new NumExpr(2))));
         CHECK(parse_str("-1+2") -> equals(new AddExpr(new NumExpr(-1), new NumExpr(2))));
+        CHECK(parse_str("3==3") -> equals(new EqualExpr(new NumExpr(3), new NumExpr(3))));
+        CHECK(parse_str("(3==3)") -> equals(new EqualExpr(new NumExpr(3), new NumExpr(3))));
+        CHECK(parse_str(" 3==3") -> equals(new EqualExpr(new NumExpr(3), new NumExpr(3))));
 
         CHECK(parse_str("1*2") -> equals(new MultExpr(new NumExpr(1), new NumExpr(2))));
         CHECK(parse_str("  1*2") -> equals(new MultExpr(new NumExpr(1), new NumExpr(2))));
@@ -330,6 +340,8 @@ TEST_CASE("parse"){
         CHECK((parse_str("_letExpr x=5 _in _letExpr x = x+2 _in x + 1")->equals
         (new _letExpr("x", new NumExpr(5), new _letExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2)), new AddExpr(new VarExpr("x"), new NumExpr(1)))))));
 
+        CHECK(parse_str("_true") -> equals(new BoolExpr(true)));
+        CHECK(parse_str("_false") -> equals(new BoolExpr(false)));
 
     }
 
