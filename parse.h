@@ -7,6 +7,8 @@
 
 
 #include "expr.h"
+#include "pointer.h"
+
 void consume(std::istream &in, int expect);
 void skip_whitespace(std::istream &in);
 Expr *parse_str(std::string s);
@@ -16,6 +18,7 @@ Expr *parse_val(std::istream &in);
 std::string parse_keyword(std::istream &in);
 Expr *parse_let(std::istream &in);
 Expr *parse_if(std::istream &in);
+Expr *parse_function(std::istream &in);
 
 Expr *parse_expr(std::istream &in);
 Expr *parse_comparg(std::istream &in);
