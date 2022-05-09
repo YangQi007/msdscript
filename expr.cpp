@@ -481,3 +481,87 @@ void IfExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) 
     }
 }
 
+//subclass Functions
+FunExpr::FunExpr(std::string formal_arg, Expr *body) {
+    this -> formal_arg = formal_arg;
+    this -> body = body;
+}
+
+bool FunExpr::equals(Expr *e) {
+    FunExpr *n = dynamic_cast<FunExpr*>(e);
+    if (n == NULL) return false;
+    return (this -> formal_arg == n -> formal_arg &&
+            this -> body -> equals(n -> body));
+}
+
+Val *FunExpr::interp() {
+    return new FunVal(formal_arg, body);
+}
+
+Expr *FunExpr::subst(std::string s, Expr *e) {
+//    if (s == formal_arg)
+//        return new FunExpr(formal_arg, body);
+    if (s != formal_arg)
+        return this;
+    else
+        return new FunExpr(formal_arg, body -> subst(s, e));
+}
+
+void FunExpr::print(std::ostream &os) {
+    os << "(_fun (" << formal_arg << ") ";
+    this -> body -> print(os);
+    os << ")";
+}
+
+bool FunExpr::has_variable() {
+
+}
+
+void FunExpr::pretty_print(std::ostream &out) {
+
+}
+
+void FunExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
+
+}
+
+//subclass CallExpr
+CallExpr::CallExpr(Expr *to_be_called, Expr *actual_arg) {
+    this -> to_be_called = to_be_called;
+    this -> actual_arg = actual_arg;
+}
+
+bool CallExpr::equals(Expr *e) {
+    CallExpr* n = dynamic_cast<CallExpr*>(e);
+    if (n == NULL) return false;
+    return (this -> to_be_called -> equals(n -> to_be_called) &&
+            this -> actual_arg -> equals(n->actual_arg));
+}
+
+Val *CallExpr::interp() {
+    return to_be_called -> interp() -> call(actual_arg -> interp());
+}
+
+Expr *CallExpr::subst(std::string s, Expr *e) {
+    return new CallExpr(to_be_called -> subst(s, e),
+                        actual_arg -> subst(s, e));
+}
+
+void CallExpr::print(std::ostream &os) {
+    this -> to_be_called->print(os);
+    os << "(";
+    this -> actual_arg->print(os);
+    os << ")";
+}
+
+bool CallExpr::has_variable() {
+
+}
+
+void CallExpr::pretty_print(std::ostream &out) {
+
+}
+
+void CallExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
+
+}
