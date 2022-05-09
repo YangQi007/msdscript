@@ -317,6 +317,13 @@ TEST_CASE("parse"){
 
     }
 
+    SECTION("Parse_function"){
+        CHECK(parse_str("_fun (x) x+2") -> equals(new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2)))));
+
+        CHECK(parse_str("(_fun (x) (x+2))(1)")->equals(new CallExpr(new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2))),
+                      new NumExpr(1))));
+    }
+
     SECTION("parse_expr,parse_comparg,parse_addend,parse_multicand"){
         CHECK(parse_str("1+2") -> equals(new AddExpr(new NumExpr(1), new NumExpr(2))));
         CHECK(parse_str("  1+2") -> equals(new AddExpr(new NumExpr(1), new NumExpr(2))));
@@ -581,4 +588,64 @@ TEST_CASE("IfExpr"){
     }
 }
 
+TEST_CASE("FunExpr") {
+    Expr *n1 = new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2)));
 
+    SECTION("equals") {
+
+        CHECK(n1 -> equals(new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2)))));
+        CHECK(n1 -> equals(new FunExpr("x", new AddExpr(new NumExpr(2), new VarExpr("x")))) == false);
+    }
+
+    SECTION("interp"){
+        Expr *n1 = new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2)));
+        CHECK((n1 -> interp()) -> equals(new FunVal("x", new AddExpr(new VarExpr("x"), new NumExpr(2)))));
+        CHECK((n1 -> interp()) -> equals(new FunVal("y", new AddExpr(new VarExpr("y"), new NumExpr(2)))) == false);
+    }
+
+    SECTION("subst"){
+
+        CHECK((n1 -> subst("x", new NumExpr(3))) -> equals (new FunExpr("x",
+                                                                          new AddExpr(new NumExpr(3), new NumExpr(2)))));
+        CHECK((n1 -> subst("y", new NumExpr(3))) -> equals (n1));
+    }
+
+    SECTION("print"){
+
+        CHECK(n1 -> to_string() == "(_fun (x) (x+2))");
+    }
+
+}
+
+
+TEST_CASE("CallExpr") {
+    Expr *n1 = new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2)));
+    Expr *n2 = new CallExpr(n1, new NumExpr(1));
+    Expr *n3 = new CallExpr(new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2))),
+                            new NumExpr(1));
+
+    SECTION("equals") {
+
+        CHECK(n3->equals(new CallExpr(new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2))),
+                                        new NumExpr(1))));
+        CHECK(n3->equals(new CallExpr(new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(2))),
+                                        new NumExpr(-1)))
+              == false);
+    }
+
+    SECTION("interp") {
+
+        CHECK((n2 -> interp()) -> equals((n1 -> interp()) -> call((new NumExpr(1)) -> interp())));
+    }
+
+    SECTION("subst") {
+        CHECK(n2->subst("x", new NumExpr(3))->equals
+                (new CallExpr(new FunExpr("x",new AddExpr(new NumExpr(3), new NumExpr(2))),
+                              new NumExpr(1))));
+        CHECK(n1->subst("y", new NumExpr(3))->equals(n1));
+    }
+
+    SECTION("print") {
+        CHECK(n2->to_string() == "(_fun (x) (x+2))(1)");
+    }
+}

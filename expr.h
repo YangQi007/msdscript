@@ -43,7 +43,7 @@ public:
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
-    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
 
 };
 
@@ -59,7 +59,7 @@ public:
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
-    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
 
 
 };
@@ -76,7 +76,7 @@ public:
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
-    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
 
 };
 
@@ -91,7 +91,7 @@ public:
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
-    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
 
 };
 
@@ -108,7 +108,7 @@ public:
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
-    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
 
 };
 
@@ -123,7 +123,7 @@ public:
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
-    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
 
 };
 
@@ -139,7 +139,7 @@ public:
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
-    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
 
 };
 
@@ -156,7 +156,40 @@ public:
     Expr* subst(std::string s, Expr *e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
-    virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+
+};
+
+class FunExpr: public Expr {
+public:
+    std::string formal_arg;
+    Expr* body;
+
+     FunExpr (std::string formal_arg, Expr* body);
+     bool equals(Expr* e) override;
+     Val* interp() override;
+     bool has_variable() override;
+     Expr* subst(std::string s, Expr *e) override;
+     void print(std::ostream& os) override;
+    void pretty_print(std::ostream &out) override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+
+};
+
+
+class CallExpr: public Expr {
+public:
+    Expr* to_be_called;
+    Expr* actual_arg;
+
+    CallExpr (Expr* to_be_called, Expr* actual_arg);
+    bool equals(Expr* e) override;
+    Val* interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr *e) override;
+    void print(std::ostream& os) override;
+    void pretty_print(std::ostream &out) override;
+    void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
 
 };
 

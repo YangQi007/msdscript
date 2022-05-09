@@ -124,6 +124,26 @@ Expr *parse_if(std::istream &in){
     return new IfExpr(condition, then_part, else_part);
 }
 
+Expr *parse_function(std::istream &in){
+    skip_whitespace(in);
+    std::string formal_arg;
+    if (in.peek() == '('){
+        consume(in, '(');
+        skip_whitespace(in);
+        formal_arg = parse_val(in)->to_string();
+        skip_whitespace(in);
+        int c = in.get();
+        if (c!= ')'){
+            throw std::runtime_error("missing close parenthesis");
+        }
+    }
+    skip_whitespace(in);
+    Expr *body;
+    body = parse_expr(in);
+    return new FunExpr(formal_arg, body);
+}
+
+
 /*
 <addend> = <number>
          | ( <expr> )
@@ -219,16 +239,39 @@ Expr *parse_addend(std::istream &in){
 
 /*
 
-<multicand> = <number>
+<multicand> = <inner>
+            | <multicand> ( <expr> )
+
+ **/
+Expr *parse_multicand(std::istream &in){
+    skip_whitespace(in);
+    Expr *e;
+    e = parse_inner(in);
+
+    while (in.peek() == '('){
+        consume(in, '(');
+        skip_whitespace(in);
+        Expr *actual_arg = parse_expr(in);
+        skip_whitespace(in);
+        consume(in,')');
+        e = new CallExpr(e, actual_arg);
+    }
+    return e;
+}
+
+/*
+
+<inner> = <number>
             | ( <expr> )
             | <variable>
             | _letExpr <variable> = <expr> _in <expr>
             | _true
             | _false
             | _if <expr> _then <expr> _else <expr>
+            | _fun ( <variable> ) <expr>
  **/
 
-Expr *parse_multicand(std::istream &in) {
+Expr *parse_inner(std::istream &in) {
     skip_whitespace(in);
 
     int c = in.peek();
@@ -250,7 +293,7 @@ Expr *parse_multicand(std::istream &in) {
     else if (isalpha(c)) {
         return parse_val(in);
     }
-        //grammar _letExpr _ifExpr _true _false
+        //grammar _letExpr _ifExpr _true _false _fun
     else if (c == '_') {
         std::string keyword = parse_keyword(in);
         if (keyword == "_letExpr") {
@@ -264,6 +307,9 @@ Expr *parse_multicand(std::istream &in) {
         }
         else if(keyword == "_if"){
             return parse_if(in);
+        }
+        else if(keyword == "_fun"){
+            return parse_function(in);
         }
     }
 
