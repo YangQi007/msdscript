@@ -13,12 +13,12 @@ class Expr;
 
 class Val {
 public:
-    virtual bool equals(Val *val) = 0;
-    virtual Val *add_to(Val *val) = 0;
-    virtual Val *mult_to(Val *val) = 0;
-    virtual Expr *to_expr() = 0;
+    virtual bool equals(PTR(Val) val) = 0;
+    virtual PTR(Val) add_to(PTR(Val) val) = 0;
+    virtual PTR(Val) mult_to(PTR(Val) val) = 0;
+    virtual PTR(Expr) to_expr() = 0;
     virtual std::string to_string() = 0;
-    virtual Val* call(Val* actual_arg) = 0;
+    virtual PTR(Val) call(PTR(Val) actual_arg) = 0;
 
 };
 
@@ -27,12 +27,12 @@ public:
     int val;
     NumVal (int val);
 
-    bool equals(Val *val) override;
-    Val *add_to(Val *val) override;
-    Val *mult_to(Val *val) override;
-    Expr *to_expr() override;
+    bool equals(PTR(Val) val) override;
+    PTR(Val) add_to(PTR(Val) val) override;
+    PTR(Val) mult_to(PTR(Val) val) override;
+    PTR(Expr) to_expr() override;
     std::string to_string() override;
-    Val* call(Val* actual_arg) override;
+    PTR(Val) call(PTR(Val) actual_arg) override;
 };
 
 class BoolVal : public Val{
@@ -40,27 +40,27 @@ public:
     bool val;
     BoolVal (bool val);
 
-    bool equals(Val *val) override;
-    Val *add_to(Val *val) override;
-    Val *mult_to(Val *val) override;
-    Expr *to_expr() override;
+    bool equals(PTR(Val) val) override;
+    PTR(Val) add_to(PTR(Val) val) override;
+    PTR(Val) mult_to(PTR(Val) val) override;
+    PTR(Expr) to_expr() override;
     std::string to_string() override;
-    Val* call(Val* actual_arg) override;
+    PTR(Val) call(PTR(Val) actual_arg) override;
 };
 
 class FunVal: public Val {
 public:
     std::string formal_arg;
-    Expr* body;
+    PTR(Expr) body;
 
-    FunVal(std::string formal_arg, Expr* body);
+    FunVal(std::string formal_arg, PTR(Expr) body);
 
-    bool equals(Val *val) override;
-    Val *add_to(Val *val) override;
-    Val *mult_to(Val *val) override;
-    Expr *to_expr() override;
+    bool equals(PTR(Val) val) override;
+    PTR(Val) add_to(PTR(Val) val) override;
+    PTR(Val) mult_to(PTR(Val) val) override;
+    PTR(Expr) to_expr() override;
     std::string to_string() override;
-    Val* call(Val* actual_arg) override;
+    PTR(Val) call(PTR(Val) actual_arg) override;
 };
 
 

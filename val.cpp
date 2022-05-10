@@ -11,21 +11,21 @@ Expr
 NumExpr, AddExpr, MultExpr
 Var, Let
 int interp()
-Expr* subst(...)
+Expr subst(...)
 void print(...), ...
  //////////////////////////////////
 Refactored
 Val
 NumVal, BoolVal
-Expr* to_expr(), ...
+Expr to_expr(), ...
 Expr
 NumExpr, AddExpr, MultExpr
 VarExpr, LetExpr
 BoolExpr,  EqExpr, IfExpr
-Val* interp()
-Expr* subst(...)
+Val interp()
+Expr subst(...)
 void print(...), ...
- * **/
+  **/
 
 //subclass numValue
 NumVal::NumVal(int val) {
@@ -33,36 +33,36 @@ NumVal::NumVal(int val) {
 
 }
 
-bool NumVal::equals(Val *val) {
-    NumVal *numVal = dynamic_cast<NumVal *>(val);
+bool NumVal::equals(PTR(Val) val) {
+    PTR(NumVal) numVal = CAST(NumVal)(val);
     if (numVal == NULL)
     return false;
     return this -> val == numVal -> val;
 }
 
-Val *NumVal::add_to(Val *val) {
-    NumVal *numVal = dynamic_cast<NumVal *>(val);
+PTR(Val) NumVal::add_to(PTR(Val) val) {
+    PTR(NumVal) numVal = CAST(NumVal)(val);
     if (numVal == NULL)
         throw std::runtime_error("Should be a number.");
-    return new NumVal (this -> val + numVal -> val);
+    return NEW (NumVal) (this -> val + numVal -> val);
 }
 
-Val *NumVal::mult_to(Val *val) {
-    NumVal *numVal = dynamic_cast<NumVal *>(val);
+PTR(Val) NumVal::mult_to(PTR(Val) val) {
+    PTR(NumVal) numVal = CAST(NumVal )(val);
     if (numVal == NULL)
         throw std::runtime_error("Should be a number.");
-    return new NumVal (this -> val * numVal -> val);
+    return NEW (NumVal) (this -> val * numVal -> val);
 }
 
-Expr *NumVal::to_expr() {
-    return new NumExpr(this -> val);
+PTR(Expr) NumVal::to_expr() {
+    return NEW (NumExpr)(this -> val);
 }
 
 std::string NumVal::to_string() {
     return std::to_string(this -> val);
 }
 
-Val *NumVal::call(Val *actual_arg) {
+PTR(Val) NumVal::call(PTR(Val) actual_arg) {
     throw std::runtime_error("Error: call() is unavailable.");
 }
 
@@ -72,23 +72,23 @@ BoolVal::BoolVal(bool val) {
     this -> val = val;
 }
 
-bool BoolVal::equals(Val *val) {
-    BoolVal *boolVal = dynamic_cast<BoolVal *>(val);
+bool BoolVal::equals(PTR(Val) val) {
+    PTR(BoolVal) boolVal = CAST(BoolVal)(val);
     if (boolVal == NULL)
     return false;
     return this ->val == boolVal -> val;
 }
 
-Val *BoolVal::add_to(Val *val) {
+PTR(Val) BoolVal::add_to(PTR(Val) val) {
     throw std::runtime_error("Cannot add BooVal type.");
 }
 
-Val *BoolVal::mult_to(Val *val) {
+PTR(Val) BoolVal::mult_to(PTR(Val) val) {
     throw std::runtime_error("Cannot multiply BooVal type.");
 }
 
-Expr *BoolVal::to_expr() {
-    return new BoolExpr(this ->val);
+PTR(Expr) BoolVal::to_expr() {
+    return NEW (BoolExpr)(this ->val);
 }
 
 std::string BoolVal::to_string() {
@@ -98,18 +98,18 @@ std::string BoolVal::to_string() {
         return "_false";
 }
 
-Val *BoolVal::call(Val *actual_arg) {
+PTR(Val) BoolVal::call(PTR(Val) actual_arg) {
     throw std::runtime_error("Error: call() is unavailable.");
 }
 
 //subclass Funval
-FunVal::FunVal(std::string formal_arg, Expr *body) {
+FunVal::FunVal(std::string formal_arg, PTR(Expr) body) {
     this -> formal_arg = formal_arg;
     this -> body = body;
 }
 
-bool FunVal::equals(Val *val) {
-    FunVal *n = dynamic_cast<FunVal*>(val);
+bool FunVal::equals(PTR(Val) val) {
+    PTR(FunVal) n = CAST(FunVal)(val);
     if (n == NULL) return false;
     else {
         return (this -> formal_arg == n -> formal_arg &&
@@ -117,16 +117,16 @@ bool FunVal::equals(Val *val) {
     }
 }
 
-Val *FunVal::add_to(Val *val) {
+PTR(Val) FunVal::add_to(PTR(Val) val) {
     throw std::runtime_error("Error: Invalid input.");
 }
 
-Val *FunVal::mult_to(Val *val) {
+PTR(Val) FunVal::mult_to(PTR(Val) val) {
     throw std::runtime_error("Error: Invalid input");
 }
 
-Expr *FunVal::to_expr() {
-    return new FunExpr(this -> formal_arg, this -> body);
+PTR(Expr) FunVal::to_expr() {
+    return NEW (FunExpr)(this -> formal_arg, this -> body);
 }
 
 std::string FunVal::to_string() {
@@ -134,6 +134,6 @@ std::string FunVal::to_string() {
             this -> body -> to_string());
 }
 
-Val *FunVal::call(Val *actual_arg) {
+PTR(Val) FunVal::call(PTR(Val) actual_arg) {
     return this ->body->subst(formal_arg,actual_arg->to_expr())->interp();
 }
