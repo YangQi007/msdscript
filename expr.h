@@ -19,7 +19,9 @@ typedef enum {
     prec_eq
 } precedence_t;
 
-class Expr{
+class Val;
+
+CLASS (Expr){
 public:
     virtual bool equals(PTR(Expr) e) = 0;
     virtual PTR(Val)  interp() = 0;

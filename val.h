@@ -8,10 +8,11 @@
 #include <stdio.h>
 #include <string>
 #include "pointer.h"
+#include "expr.h"
 
 class Expr;
 
-class Val {
+CLASS (Val) {
 public:
     virtual bool equals(PTR(Val) val) = 0;
     virtual PTR(Val) add_to(PTR(Val) val) = 0;
