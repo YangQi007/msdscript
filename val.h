@@ -14,6 +14,7 @@ class Expr;
 
 CLASS (Val) {
 public:
+    virtual ~Val() {};
     virtual bool equals(PTR(Val) val) = 0;
     virtual PTR(Val) add_to(PTR(Val) val) = 0;
     virtual PTR(Val) mult_to(PTR(Val) val) = 0;

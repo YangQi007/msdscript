@@ -23,6 +23,7 @@ class Val;
 
 CLASS (Expr){
 public:
+    virtual ~Expr() {};
     virtual bool equals(PTR(Expr) e) = 0;
     virtual PTR(Val)  interp() = 0;
     virtual bool has_variable() = 0;
