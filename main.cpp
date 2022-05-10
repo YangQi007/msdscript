@@ -85,7 +85,7 @@ TEST_CASE("(AddExpr)") {
     }
 
     SECTION("subst"){
-        CHECK( (NEW ((AddExpr))(NEW ((VarExpr))("x"), NEW (NumExpr)(7)))
+        CHECK( (NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(7)))
                        ->subst("x", NEW (VarExpr)("y"))
                        ->equals(NEW (AddExpr)(NEW (VarExpr)("y"), NEW (NumExpr)(7))) );
     }
@@ -356,10 +356,10 @@ TEST_CASE("parse"){
 }
 
 TEST_CASE("Value refactor"){
-    Val *n1 = NEW (NumVal)(1);
-    Val *n2 = NEW (NumVal)(2);
-    Val *n3 = NEW (NumVal)(2);
-    Val *n4 = NEW (NumVal)(3);
+    PTR(Val) n1 = NEW (NumVal)(1);
+    PTR(Val) n2 = NEW (NumVal)(2);
+    PTR(Val) n3 = NEW (NumVal)(2);
+    PTR(Val) n4 = NEW (NumVal)(3);
 
     SECTION("equals"){
         CHECK(n1 -> equals(n2) == false);
@@ -390,11 +390,11 @@ TEST_CASE("Value refactor"){
 }
 
 TEST_CASE("subclass boolValue"){
-    Val *n1 = NEW (BoolVal)(true);
-    Val *n2 = NEW (BoolVal)(false);
-    Val *n3 = NEW (BoolVal)(true);
-    Val *n4 = NEW (BoolVal)(false);
-    Val *n5 = NEW (NumVal) (1);
+    PTR(Val) n1 = NEW (BoolVal)(true);
+    PTR(Val) n2 = NEW (BoolVal)(false);
+    PTR(Val) n3 = NEW (BoolVal)(true);
+    PTR(Val) n4 = NEW (BoolVal)(false);
+    PTR(Val) n5 = NEW (NumVal) (1);
 
     SECTION("equals"){
         CHECK(n1 -> equals(n2) == false);
@@ -475,10 +475,10 @@ TEST_CASE("EqualExpr") {
     PTR(NumExpr) n2 = NEW (NumExpr)(2);
     PTR(NumExpr) n3 = NEW (NumExpr)(3);
     PTR(AddExpr) n4 = NEW (AddExpr)(n1,n2);
-    EqualExpr *n5 = NEW (EqualExpr)(n3, n4);
-    EqualExpr *n6 = NEW (EqualExpr)(n3, n4);
-    EqualExpr *n7 = NEW (EqualExpr)(n1, n2);
-    EqualExpr *n8 = NEW (EqualExpr)(n1, v1);
+    PTR(EqualExpr) n5 = NEW (EqualExpr)(n3, n4);
+    PTR(EqualExpr) n6 = NEW (EqualExpr)(n3, n4);
+    PTR(EqualExpr) n7 = NEW (EqualExpr)(n1, n2);
+    PTR(EqualExpr) n8 = NEW (EqualExpr)(n1, v1);
 
 //    (MultExpr) *m1 = NEW (MultExpr)(n1, n2);
 //    (MultExpr) *m2 = NEW (MultExpr)(n1, n3);
@@ -596,7 +596,7 @@ TEST_CASE("IfExpr"){
 }
 
 TEST_CASE("FunExpr") {
-    Expr *n1 = NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2)));
+    PTR(Expr) n1 = NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2)));
 
     SECTION("equals") {
 
@@ -605,7 +605,7 @@ TEST_CASE("FunExpr") {
     }
 
     SECTION("interp"){
-        Expr *n1 = NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2)));
+        PTR(Expr) n1 = NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2)));
         CHECK((n1 -> interp()) -> equals(NEW (FunVal)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2)))));
         CHECK((n1 -> interp()) -> equals(NEW (FunVal)("y", NEW (AddExpr)(NEW (VarExpr)("y"), NEW (NumExpr)(2)))) == false);
     }
@@ -626,9 +626,9 @@ TEST_CASE("FunExpr") {
 
 
 TEST_CASE("CallExpr") {
-    Expr *n1 = NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2)));
-    Expr *n2 = NEW (CallExpr)(n1, NEW (NumExpr)(1));
-    Expr *n3 = NEW (CallExpr)(NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2))),
+    PTR(Expr) n1 = NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2)));
+    PTR(Expr) n2 = NEW (CallExpr)(n1, NEW (NumExpr)(1));
+    PTR(Expr) n3 = NEW (CallExpr)(NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2))),
                             NEW (NumExpr)(1));
 
     SECTION("equals") {
