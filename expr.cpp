@@ -201,7 +201,7 @@ PTR(Expr) VarExpr::subst(std::string s, PTR(Expr) e) {
     if (this->val == s ){
         return e;
     }else
-        return this;
+        return THIS;
 }
 
 void VarExpr::print(std::ostream &out) {
