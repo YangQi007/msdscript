@@ -27,8 +27,4 @@
 #endif
 
 
-
-
-
-
 #endif //MSDSCRIPT_POINTER_H
