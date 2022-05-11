@@ -20,14 +20,15 @@ typedef enum {
 } precedence_t;
 
 class Val;
+class Env;
 
 CLASS (Expr){
 public:
     virtual ~Expr() {};
     virtual bool equals(PTR(Expr) e) = 0;
-    virtual PTR(Val)  interp() = 0;
+    virtual PTR(Val) interp(PTR(Env) env) = 0;
     virtual bool has_variable() = 0;
-    virtual PTR(Expr) subst(std::string s, PTR(Expr) e) = 0;
+    //virtual PTR(Expr) subst(std::string s, PTR(Expr) e) = 0;
     virtual void print(std::ostream &out) = 0;
     virtual void pretty_print(std::ostream &out) = 0;
     virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position) = 0;
@@ -42,9 +43,9 @@ public:
 
     NumExpr(int val);
     bool equals(PTR(Expr) e) override;
-    PTR(Val)  interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     bool has_variable() override;
-    PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+    //PTR(Expr) subst(std::string s, PTR(Expr) e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
@@ -58,9 +59,9 @@ public:
 
     AddExpr(PTR(Expr) lhs, PTR(Expr) rhs);
     bool equals(PTR(Expr) e) override;
-    PTR(Val)  interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     bool has_variable() override;
-    PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+   // PTR(Expr) subst(std::string s, PTR(Expr) e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
@@ -75,9 +76,9 @@ public:
 
     MultExpr(PTR(Expr) lhs, PTR(Expr) rhs);
     bool equals(PTR(Expr) e) override;
-    PTR(Val)  interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     bool has_variable() override;
-    PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+    //PTR(Expr) subst(std::string s, PTR(Expr) e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
@@ -90,9 +91,9 @@ public:
 
     VarExpr(std::string val);
     bool equals(PTR(Expr) e) override;
-    PTR(Val)  interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     bool has_variable() override;
-    PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+    //PTR(Expr) subst(std::string s, PTR(Expr) e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
@@ -107,9 +108,9 @@ public:
 
     _letExpr(std::string lhs, PTR(Expr) rhs, PTR(Expr) body);
     bool equals(PTR(Expr) e) override;
-    PTR(Val)  interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     bool has_variable() override;
-    PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+    //PTR(Expr) subst(std::string s, PTR(Expr) e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
@@ -122,9 +123,9 @@ public:
 
     BoolExpr(bool val);
     bool equals(PTR(Expr) e) override;
-    PTR(Val)  interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     bool has_variable() override;
-    PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+    //PTR(Expr) subst(std::string s, PTR(Expr) e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
@@ -138,9 +139,9 @@ public:
 
     EqualExpr(PTR(Expr) lhs, PTR(Expr) rhs);
     bool equals(PTR(Expr) e) override;
-    PTR(Val)  interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     bool has_variable() override;
-    PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+    //PTR(Expr) subst(std::string s, PTR(Expr) e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
@@ -155,9 +156,9 @@ public:
 
     IfExpr(PTR(Expr) condition, PTR(Expr) then_part, PTR(Expr) else_part);
     bool equals(PTR(Expr) e) override;
-    PTR(Val)  interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     bool has_variable() override;
-    PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+    //PTR(Expr) subst(std::string s, PTR(Expr) e) override;
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
@@ -171,9 +172,9 @@ public:
 
      FunExpr (std::string formal_arg, PTR(Expr) body);
      bool equals(PTR(Expr) e) override;
-     PTR(Val) interp() override;
+     PTR(Val) interp(PTR(Env) env) override;
      bool has_variable() override;
-     PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+     //PTR(Expr) subst(std::string s, PTR(Expr) e) override;
      void print(std::ostream& out) override;
      void pretty_print(std::ostream &out) override;
      void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
@@ -188,9 +189,9 @@ public:
 
     CallExpr (PTR(Expr) to_be_called, PTR(Expr) actual_arg);
     bool equals(PTR(Expr) e) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     bool has_variable() override;
-    PTR(Expr) subst(std::string s, PTR(Expr) e) override;
+    //PTR(Expr) subst(std::string s, PTR(Expr) e) override;
     void print(std::ostream& out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
