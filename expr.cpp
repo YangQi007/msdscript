@@ -5,6 +5,7 @@
 #include "expr.h"
 #include "val.h"
 #include "env.h"
+#include "step.h"
 #include <stdexcept>
 #include <sstream>
 
@@ -58,6 +59,11 @@ void NumExpr::pretty_print(std::ostream &out) {
 
 void NumExpr::pretty_print_at(std::ostream &out, precedence_t p, long *positon) {
     out << this->val;
+}
+
+void NumExpr::step_interp() {
+    Step::mode = Step::continue_mode;
+    Step::val = NEW(NumVal)(val);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -115,6 +121,14 @@ void AddExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position)
     if (p == prec_add || p == prec_mult || p == prec_let){
         out << ")";
     }
+}
+
+void AddExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = lhs;
+    //Step::env = Step::env;
+    Step::cont = NEW(RightThenAddCont)(this->rhs, Step::env, Step::cont);
+
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -175,6 +189,13 @@ void MultExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position
 
 }
 
+void MultExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = lhs;
+    Step::cont = NEW(RightThenMultCont)(this->rhs, Step::env, Step::cont);
+
+}
+
 /////////////////////////////////////////////////////////////////////
 //subclass variables
 VarExpr::VarExpr(std::string val) {
@@ -218,6 +239,11 @@ void VarExpr::pretty_print(std::ostream &out) {
 void VarExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
     out << this->val;
 
+}
+
+void VarExpr::step_interp() {
+    Step::mode = Step::continue_mode;
+    Step::val = Step::env->lookup(val);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -298,6 +324,14 @@ void _letExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position
     }
 }
 
+void _letExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = rhs;
+    Step::env = Step::env;
+    Step::cont = NEW(LetBodyCont)(lhs, body, Step::env, Step::cont);
+
+}
+
 // boolean expression
 BoolExpr::BoolExpr(bool val) {
    this -> val = val;
@@ -337,6 +371,11 @@ void BoolExpr::pretty_print(std::ostream &out) {
 
 void BoolExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
     print(out);
+}
+
+void BoolExpr::step_interp() {
+    Step::mode = Step::continue_mode;
+    Step::val = NEW(BoolVal)(val);
 }
 
 // equal expression
@@ -395,6 +434,12 @@ void EqualExpr::pretty_print_at(std::ostream &out, precedence_t p, long *positio
         this->rhs->pretty_print_at(out, prec_none, position);
         out << ")";
     }
+}
+
+void EqualExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = lhs;
+    Step::cont = NEW(RightThenEqCont)(rhs, Step::env, Step::cont);
 }
 
 // conditions expressions
@@ -482,6 +527,14 @@ void IfExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) 
     }
 }
 
+void IfExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = condition;
+    Step::env = Step::env;
+    Step::cont = NEW(IfBranchCont)(then_part, else_part, Step::env, Step::cont);
+
+}
+
 
 //subclass Functions
 FunExpr::FunExpr(std::string formal_arg, PTR(Expr) body) {
@@ -515,6 +568,12 @@ void FunExpr::print(std::ostream &out) {
     out << ")";
 }
 
+void FunExpr::step_interp() {
+    Step::mode = Step::continue_mode;
+    Step::val = NEW(FunVal)(this->formal_arg, this->body, Step::env);
+    Step::env = NEW(ExtendedEnv)(formal_arg, Step::val, Step::env);
+}
+
 bool FunExpr::has_variable() {
 
 }
@@ -526,6 +585,7 @@ void FunExpr::pretty_print(std::ostream &out) {
 void FunExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
 
 }
+
 
 //subclass CallExpr
 CallExpr::CallExpr(PTR(Expr) to_be_called, PTR(Expr) actual_arg) {
@@ -556,6 +616,12 @@ void CallExpr::print(std::ostream &out) {
     out << ")";
 }
 
+void CallExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = to_be_called;
+    Step::cont = NEW(ArgThenCallCont)(actual_arg, Step::env, Step::cont);
+}
+
 bool CallExpr::has_variable() {
 
 }
@@ -567,3 +633,5 @@ void CallExpr::pretty_print(std::ostream &out) {
 void CallExpr::pretty_print_at(std::ostream &out, precedence_t p, long *position) {
 
 }
+
+

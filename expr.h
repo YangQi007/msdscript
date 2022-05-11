@@ -32,6 +32,8 @@ public:
     virtual void print(std::ostream &out) = 0;
     virtual void pretty_print(std::ostream &out) = 0;
     virtual void pretty_print_at(std::ostream &out,precedence_t p,long *position) = 0;
+    virtual void step_interp() = 0;
+
     std::string to_string();
     std::string to_string_pretty();
 
@@ -49,6 +51,7 @@ public:
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+    void step_interp() override;
 
 };
 
@@ -65,6 +68,7 @@ public:
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+    void step_interp() override;
 
 
 };
@@ -82,6 +86,7 @@ public:
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+    void step_interp() override;
 
 };
 
@@ -97,6 +102,7 @@ public:
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+    void step_interp() override;
 
 };
 
@@ -114,6 +120,7 @@ public:
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position) override;
+    void step_interp() override;
 
 };
 
@@ -129,6 +136,7 @@ public:
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+    void step_interp() override;
 
 };
 
@@ -145,6 +153,7 @@ public:
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+    void step_interp() override;
 
 };
 
@@ -162,6 +171,7 @@ public:
     void print(std::ostream &out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+    void step_interp() override;
 
 };
 
@@ -178,6 +188,7 @@ public:
      void print(std::ostream& out) override;
      void pretty_print(std::ostream &out) override;
      void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+     void step_interp() override;
 
 };
 
@@ -195,6 +206,7 @@ public:
     void print(std::ostream& out) override;
     void pretty_print(std::ostream &out) override;
     void pretty_print_at(std::ostream &out,precedence_t p,long *position)  override;
+    void step_interp() override;
 
 };
 

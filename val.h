@@ -12,6 +12,7 @@
 
 class Expr;
 class Env;
+class Cont;
 
 CLASS (Val) {
 public:
@@ -22,6 +23,7 @@ public:
     //virtual PTR(Expr) to_expr() = 0;
     virtual std::string to_string() = 0;
     virtual PTR(Val) call(PTR(Val) actual_arg) = 0;
+    virtual void call_step(PTR(Val) actual_arg, PTR(Cont) rest) = 0;
 
 };
 
@@ -36,6 +38,7 @@ public:
     //PTR(Expr) to_expr() override;
     std::string to_string() override;
     PTR(Val) call(PTR(Val) actual_arg) override;
+    void call_step(PTR(Val) actual_arg, PTR(Cont) rest) override;
 };
 
 class BoolVal : public Val{
@@ -49,6 +52,7 @@ public:
     //PTR(Expr) to_expr() override;
     std::string to_string() override;
     PTR(Val) call(PTR(Val) actual_arg) override;
+    void call_step(PTR(Val) actual_arg, PTR(Cont) rest) override;
 };
 
 class FunVal: public Val {
@@ -65,6 +69,7 @@ public:
     //PTR(Expr) to_expr() override;
     std::string to_string() override;
     PTR(Val) call(PTR(Val) actual_arg) override;
+    void call_step(PTR(Val) actual_arg, PTR(Cont) rest) override;
 };
 
 

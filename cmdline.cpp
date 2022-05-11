@@ -19,7 +19,7 @@ void use_arguments(int argc, char * argv[]){
         for (int i = 1; i < argc; i++){
             std::string argus = argv[i];
             if (argus == "--help"){
-                std::cout<<"Valid command lines: '--test' '--interp' '--print' '--pretty-print'."<<"\n";
+                std::cout<<"Valid command lines: '--test' '--interp' '--step' '--print' '--pretty-print'."<<"\n";
                 exit(0);
             }
             else if (argus == "--test"){
@@ -47,6 +47,10 @@ void use_arguments(int argc, char * argv[]){
             else if (argus == "--pretty-print"){
                 PTR(Expr) input = parse_expr(std::cin);
                 std::cout << input->to_string_pretty();
+            }
+            else if (argus == "--step"){
+                PTR(Expr) input = parse_expr(std::cin);
+                std::cout << Step::interp_by_steps(input)->to_string() <<"\n";
             }
             else {
                 std::cerr << "Invalid Argument\n";

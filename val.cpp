@@ -5,6 +5,7 @@
 #include "val.h"
 #include "expr.h"
 #include "env.h"
+#include "cont.h"
 /*
 Original
 int
@@ -67,6 +68,10 @@ PTR(Val) NumVal::call(PTR(Val) actual_arg) {
     throw std::runtime_error("Error: call() is unavailable.");
 }
 
+void NumVal::call_step(PTR(Val) actual_arg, PTR(Cont) rest) {
+    throw std::runtime_error("Error: call_step() is unavailable.");
+}
+
 
 //subclass boolValue
 BoolVal::BoolVal(bool val) {
@@ -101,6 +106,10 @@ std::string BoolVal::to_string() {
 
 PTR(Val) BoolVal::call(PTR(Val) actual_arg) {
     throw std::runtime_error("Error: call() is unavailable.");
+}
+
+void BoolVal::call_step(PTR(Val) actual_arg, PTR(Cont) rest) {
+    throw std::runtime_error("Error: call_step() is unavailable.");
 }
 
 
@@ -139,4 +148,11 @@ std::string FunVal::to_string() {
 
 PTR(Val) FunVal::call(PTR(Val) actual_arg) {
     return body -> interp(NEW(ExtendedEnv)(formal_arg, actual_arg,env));
+}
+
+void FunVal::call_step(PTR(Val) actual_arg, PTR(Cont) rest) {
+    Step::mode = Step::interp_mode;
+    Step::expr = body;
+    Step::env = NEW(ExtendedEnv)(formal_arg, actual_arg, env);
+    Step::cont = rest;
 }
