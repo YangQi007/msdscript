@@ -8,6 +8,7 @@
 #include "parse.h"
 #include "cmdline.h"
 #include <iostream>
+#include "env.h"
 
 void use_arguments(int argc, char * argv[]){
     if (argc == 1){
@@ -36,7 +37,7 @@ void use_arguments(int argc, char * argv[]){
                 }
             else if (argus == "--interp"){
                 PTR(Expr) input = parse_expr(std::cin);
-                PTR(Val) value = input->interp();
+                PTR(Val) value = input->interp(Env::empty);
                 std::cout << value->to_string() << "\n";
             }
             else if (argus == "--print"){

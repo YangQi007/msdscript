@@ -4,6 +4,7 @@
 
 #include "val.h"
 #include "expr.h"
+#include "env.h"
 /*
 Original
 int
@@ -54,9 +55,9 @@ PTR(Val) NumVal::mult_to(PTR(Val) val) {
     return NEW (NumVal) (this -> val * numVal -> val);
 }
 
-PTR(Expr) NumVal::to_expr() {
-    return NEW (NumExpr)(this -> val);
-}
+//PTR(Expr) NumVal::to_expr() {
+//    return NEW (NumExpr)(this -> val);
+//}
 
 std::string NumVal::to_string() {
     return std::to_string(this -> val);
@@ -87,9 +88,9 @@ PTR(Val) BoolVal::mult_to(PTR(Val) val) {
     throw std::runtime_error("Cannot multiply BooVal type.");
 }
 
-PTR(Expr) BoolVal::to_expr() {
-    return NEW (BoolExpr)(this ->val);
-}
+//PTR(Expr) BoolVal::to_expr() {
+//    return NEW (BoolExpr)(this ->val);
+//}
 
 std::string BoolVal::to_string() {
     if (this -> val)
@@ -102,10 +103,12 @@ PTR(Val) BoolVal::call(PTR(Val) actual_arg) {
     throw std::runtime_error("Error: call() is unavailable.");
 }
 
+
 //subclass Funval
-FunVal::FunVal(std::string formal_arg, PTR(Expr) body) {
+FunVal::FunVal(std::string formal_arg, PTR(Expr) body,PTR(Env) env) {
     this -> formal_arg = formal_arg;
     this -> body = body;
+    this ->env = env;
 }
 
 bool FunVal::equals(PTR(Val) val) {
@@ -125,9 +128,9 @@ PTR(Val) FunVal::mult_to(PTR(Val) val) {
     throw std::runtime_error("Error: Invalid input");
 }
 
-PTR(Expr) FunVal::to_expr() {
-    return NEW (FunExpr)(this -> formal_arg, this -> body);
-}
+//PTR(Expr) FunVal::to_expr() {
+//    return NEW (FunExpr)(this -> formal_arg, this -> body);
+//}
 
 std::string FunVal::to_string() {
     return ("_fun (" + this -> formal_arg + ") " +
@@ -135,5 +138,5 @@ std::string FunVal::to_string() {
 }
 
 PTR(Val) FunVal::call(PTR(Val) actual_arg) {
-    return this ->body->subst(formal_arg,actual_arg->to_expr())->interp();
+    return body -> interp(NEW(ExtendedEnv)(formal_arg, actual_arg,env));
 }
