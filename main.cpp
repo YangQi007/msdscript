@@ -657,3 +657,46 @@ TEST_CASE("CallExpr") {
         CHECK(n2->to_string() == "(_fun (x) (x+2))(1)");
     }
 }
+
+//A realistic way to exercise Expr::step_interp and Cont::step_continue methods is to interpret whole MSDscript programs
+TEST_CASE("continuations"){
+
+    SECTION("NumExpr"){
+        CHECK( Step::interp_by_steps(parse_str("1"))->equals(NEW(NumVal)(1)) );
+    }
+    SECTION("AddExpr") {
+        CHECK(Step::interp_by_steps(NEW(AddExpr)(NEW(NumExpr)(1), NEW(NumExpr)(2)))->equals(NEW(NumVal)(3)));
+    }
+    SECTION("MultExpr"){
+        CHECK( Step::interp_by_steps(NEW(MultExpr)(NEW(NumExpr)(1), NEW(NumExpr)(2)))->equals(NEW(NumVal)(2)));
+    }
+    SECTION("_letExpr"){
+        CHECK( Step::interp_by_steps(NEW (_letExpr)("x", NEW (NumExpr)(5), NEW (_letExpr)("x",
+                NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2)), NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(1)))))->equals(NEW(NumVal)(8)) );
+    }
+    SECTION("BoolExpr"){
+        CHECK( Step::interp_by_steps(NEW(BoolExpr)(true))->equals(NEW (BoolVal)(true)));
+        CHECK( Step::interp_by_steps(NEW(BoolExpr)(false))->equals(NEW (BoolVal)(false)));
+    }
+    SECTION("EqualExpr") {
+        CHECK(Step::interp_by_steps(NEW(EqualExpr)(NEW(NumExpr)(3), NEW(NumExpr)(3)))->equals(NEW(BoolVal)(true)));
+        CHECK(Step::interp_by_steps(NEW(EqualExpr)(NEW(NumExpr)(1), NEW(NumExpr)(3)))->equals(NEW(BoolVal)(false)));
+    }
+
+    SECTION("IfExpr"){
+        CHECK( Step::interp_by_steps(NEW (IfExpr)(NEW (EqualExpr)(NEW (NumExpr)(3),NEW (AddExpr)(NEW (NumExpr)(1),NEW (NumExpr)(2))),
+                NEW (NumExpr)(3),NEW (NumExpr)(1)))->equals(NEW(NumVal)(3)) );
+    }
+    SECTION("FunExpr"){
+        CHECK( Step::interp_by_steps(parse_str("(_fun (x) (x+2))"))->equals(NEW (FunVal)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2)),NEW(EmptyEnv)())));
+    }
+
+    SECTION("CallExpr"){
+       // CHECK( Step::interp_by_steps(parse_str("3"))->equals(NEW (CallExpr)(NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2))),
+       //                                                                                       NEW (NumExpr)(1))) );
+
+        CHECK((Step::interp_by_steps(NEW (CallExpr)(NEW (FunExpr)("x", NEW (AddExpr)(NEW (VarExpr)("x"), NEW (NumExpr)(2))),
+                                                                NEW (NumExpr)(1)))) ->equals(NEW(NumVal)(3)));
+    }
+
+}

@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include "pointer.h"
+#include "step.h"
 
 void use_arguments(int argc, char * argv[]);
 #endif //MSDSCRIPT_CMDLINE_H
