@@ -14,12 +14,12 @@ Msdscript can be used in two ways: as a excutable program by itself or incorpora
 
 ## Getting Started: <a name="paragraph1"></a>
 ### How to build as an executable program:
-1. git clone https://github.com/YangQi007/msdscript.git 
-2. cd your file directory in your terminal
-3. make 
-4. ./msdscript + comandline (There are more details about how to run different commandlines in  [User Guide](#paragraph2)) <br> 
-For example :<br> ./msdscript --interp   
-              <br>./msdscript --step
+1. **git clone** https://github.com/YangQi007/msdscript.git 
+2. **cd** your file directory in your terminal
+3. **make** 
+4. **./msdscript + comandline** (There are more details about how to run different commandlines in  [User Guide](#paragraph2)) <br> 
+For example :<br> **./msdscript --interp   
+              <br>./msdscript --step**
               
 5. In new line, type some expressions you want to parse or interpret.<br>
 For example : <br>
@@ -29,13 +29,13 @@ For example : <br>
 <br> result : 3
 
 ### How to build as a library incorporated into your application:
-1. Download the signal file "lib.a" into your program's directory
-2. clang++ -std=c++14 -o filename yourfile.cpp lib.a<br>
+1. Download the signal file **"lib.a"** into your program's directory
+2. **clang++ -std=c++14 -o filename yourfile.cpp lib.a<br>**
 For example :<br>
-You can download the test program "which_day.cpp" for testing the library<br>
-<br> About the test file which_day program : Although MSDscript is not a very rich language at the moment—it doesn't even have subtraction—it's not far from the the kinds of languages that are embedded in applications. For example, someone implementing a calendar program might want to have a language for advanced users to calculate dates for repeated meetings (say, more sophisticated than “every Tuesday”), and MSDscript could just about work for that.<br>
-<br> type in terminal : clang++ -std=c++14 -o which_day which_day.cpp lib.a
-<br> type in termial : ./which_day 13
+You can download the test program **"which_day.cpp"** for testing the library<br>
+<br><code> About the test file which_day program : Although MSDscript is not a very rich language at the moment—it doesn't even have subtraction—it's not far from the the kinds of languages that are embedded in applications. For example, someone implementing a calendar program might want to have a language for advanced users to calculate dates for repeated meetings (say, more sophisticated than “every Tuesday”), and MSDscript could just about work for that.</code><br>
+<br> type in terminal : **clang++ -std=c++14 -o which_day which_day.cpp lib.a**
+<br> type in termial : **./which_day 13**
 <br> result : 4 (which means Thursday)
                  
 
@@ -48,39 +48,39 @@ You can download the test program "which_day.cpp" for testing the library<br>
 3. You can also type : **./msdscript --help** which can list all the commandlines you can choose. <br>
 ### Examples for expressions you can input :
 #### Variables Expressions :
-<br> **./msdscript --interp
+**./msdscript --interp
 <br> <code>3</code>
 <br> 3** <br>
 #### Add Expressions :
-<br> **./msdscript --interp
+**./msdscript --interp
 <br> <code>1 + 2</code>
 <br> 3** <br>
 #### Multiply Expressions :
-<br> **./msdscript --interp
+**./msdscript --interp
 <br> <code>1 * 2 </code>
 <br> 2** <br>
 #### Let Expressions :
-<br> **./msdscript --interp
+**./msdscript --interp
 <br> <code>_let x=5 _in _let x = x+2 _in x + 1</code>
 <br> 8** <br>
 #### Boolean Expressions :
-<br> **./msdscript --interp
+**./msdscript --interp
 <br> <code>_if (3==(1+2)) _then 3 _else 1</code>
 <br> 3** <br>
 #### Function Expressions :
-<br> **./msdscript --interp
+**./msdscript --interp
 <br> The function below will evaluate a factoral 10! :**
 
-<code>_let factrl = _fun (factrl)
+<code>**_let factrl = _fun (factrl)
                 _fun (x)
                   _if x == 1
                   _then 1
                   _else x * factrl(factrl)(x + -1)
-_in  factrl(factrl)(10)</code>
+_in  factrl(factrl)(10)**</code>
 <br> **3628800** <br>
 #### Step Mode Example :
-<br> **step mode should get the same result as the interpret mode showed above except in while loop function( which can cause memory leak in interp mode)**
-<br> **./msdscript --step
+**step mode should get the same result as the interpret mode showed above except in while loop function( which can cause memory leak in interp mode)**
+<br>**./msdscript --step
 <br> <code>_let countdown = _fun(countdown)
                    _fun(n)
                      _if n == 0
@@ -88,7 +88,7 @@ _in  factrl(factrl)(10)</code>
                      _else countdown(countdown)(n + -1)
 _in countdown(countdown)(1000000)</code>
 <br> 0** <br>
-<br> **./msdscript --interp
+<br>**./msdscript --interp
 <br> <code>_let countdown = _fun(countdown)
                    _fun(n)
                      _if n == 0
@@ -97,7 +97,7 @@ _in countdown(countdown)(1000000)</code>
 _in countdown(countdown)(1000000)</code>
 <br> segmentation fault** <br>
 #### Run print commandline :
-<br> **./msdscript --print
+**./msdscript --print
 <br> <code>_let x=5 _in x+1</code>
 <br>(_let x=5 _in (x+1))**<br>
 ### Msdscript Grammar :
